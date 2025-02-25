@@ -26,9 +26,6 @@ def get_frame_classes(file_path):
 def determineNextFrame():
      pass
 
-def start_game():
-     print("Start button pressed!")
-
 def getImagePath(image_name):
 
      imagePath = str(Path().absolute() / "images" / image_name)

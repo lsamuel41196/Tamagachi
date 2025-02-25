@@ -1,7 +1,8 @@
 import tkinter as tk
 from frame_classes import *
-from utils.functions import get_frame_classes
+from utils.general_functions import get_frame_classes
 from pathlib import Path
+from Tamagachi_Class import Tamagachi
 
 
 class App(tk.Tk):
@@ -18,12 +19,15 @@ class App(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
+        self.Tamagachi = Tamagachi()
+
+
         self.frames = {}
 
         # get all the frame classes
         get_frame_classes(str(Path().absolute()) + r"\frames\frame_classes.py")
 
-        for F in (StartFrame, NewGameSetupFrame, LoadGameSetupFrame):
+        for F in (StartFrame, NewGameSetupFrame, LoadGameSetupFrame, GameWorldFrame):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -32,7 +36,6 @@ class App(tk.Tk):
             # the one on the top of the stacking order
             # will be the one that is visible.
             frame.grid(row=0, column=0, sticky="nsew")
-
 
         self.show_frame("StartFrame")
 
