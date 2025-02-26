@@ -4,14 +4,19 @@ from pathlib import Path
 from utils.general_functions import getImagePath
 from utils.button_functions import start_game, load_game
 
-
 from utils.widgets import *
+
+
+
+#TODO figure out why canvas widget is not working right
+
 
 
 class StartFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+
 
         self.game_world_widget = CanvasWidget(self, 
                                               pet_image_name=controller.Tamagachi.image_name, 
@@ -101,6 +106,9 @@ class GameWorldFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
+        #TODO: Figure out why attributes are not updating
+
+        #game world widget
         self.game_world_widget = CanvasWidget(self, 
                                               pet_image_name=controller.Tamagachi.image_name, 
                                               pet_image_size=controller.Tamagachi.image_size,
@@ -110,14 +118,25 @@ class GameWorldFrame(tk.Frame):
         self.game_world_widget.canvas.grid(row=0, column=0)
         self.game_world_widget.grid()
 
+        #tamagachi info widget
         self.tamagachi_info_widget = TamagachiInfoWidget(self)
         self.tamagachi_info_widget.Tamagachi_name_label.grid(row=1, column=0)
         self.tamagachi_info_widget.Tamagachi_gender_label.grid(row=2, column=0)
+        self.tamagachi_info_widget.Tamagachi_happiness_label.grid(row=3, column=0)
         self.tamagachi_info_widget.grid()
 
-        self.backbuttonwidget = BackButtonWidget(self, prev_frame="NewGameSetupFrame")
+        #interact buttons
+        self.interaction_widget = InteractionWidget(self)
+        self.interaction_widget.interaction_choice.grid(row=4, column=0)
+        self.interaction_widget.interaction_button.grid(row=4, column=1)
 
-        self.backbuttonwidget.Back_button.grid(row=3, column=0)
+        #message widget
+        self.interaction_widget.game_message.grid(row=5, column=0)
+        self.interaction_widget.grid()
+
+        #back buttons
+        self.backbuttonwidget = BackButtonWidget(self, prev_frame="NewGameSetupFrame")
+        self.backbuttonwidget.Back_button.grid(row=6, column=0)
         self.backbuttonwidget.grid()
 
 

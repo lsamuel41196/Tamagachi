@@ -8,6 +8,8 @@ class Tamagachi:
         self.image_name = "orange_cat2.png"
         self.image_size = (300, 300)
 
+        self.interactions = ["Feed", "Hug", "Check Status"]
+
         print("tamagachi object created!")
 
     def set_name(self, name):
@@ -31,18 +33,26 @@ class Tamagachi:
     def get_gender(self) -> str:
         return self.gender
     
-    def feed(self):
+    def feed(self) -> str:
         self.happiness += 2
-        print(f"{self.name} enjoys the food! 😋 Happiness: {self.happiness}")
 
-    def hug(self):
+        message = f"{self.name} enjoys the food! 😋 Happiness: {self.happiness}"
+
+        return (message)
+
+    def hug(self) -> str:
         self.happiness += 3
-        print(f"{self.name} feels loved! 🤗 Happiness: {self.happiness}")
 
-    def check_status(self):
+        message = f"{self.name} feels loved! 🤗 Happiness: {self.happiness}"
+
+        return (message)
+
+    def check_status(self) -> str:
         if self.happiness >= 10:
-            print(f"{self.name} is super happy! 😍")
+            message = f"{self.name} is super happy! 😍"
         elif self.happiness >= 5:
-            print(f"{self.name} is doing well! 😊")
+            message = f"{self.name} is doing well! 😊"
         else:
-            print(f"{self.name} is feeling lonely... 😢 Give it some love!")
+            message = "{self.name} is feeling lonely... 😢 Give it some love!"
+        
+        return (message)

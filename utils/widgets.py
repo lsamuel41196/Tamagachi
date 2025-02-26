@@ -25,6 +25,7 @@ class PhotoObject():
 class ImageWidget(ttk.Frame):
         def __init__(self, parent, **kwargs):
             super().__init__(parent)
+            self.parent = parent
 
             for key, value in kwargs.items():
                 setattr(self, key, value)
@@ -35,17 +36,28 @@ class ImageWidget(ttk.Frame):
 class CanvasWidget(ttk.Frame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent)
+        self.parent = parent
+
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+        
 
-        self.canvas = tk.Canvas(self, width=self.pet_image_size[0], height=self.pet_image_size[1])
-        self.photo = PhotoObject(self.pet_image_name, self.pet_image_size).photo_object
-        self.canvas.create_image(0, 0, image=self.photo, anchor="nw")
+        self.canvas = tk.Canvas(self, width=self.bg_image_size[0], height=self.bg_image_size[1])        #initialize canvas
+        self.pet_photo = PhotoObject(self.pet_image_name, self.pet_image_size).photo_object             #initialize pet image
+        self.bg_photo = PhotoObject(self.bg_image_name, self.bg_image_size).photo_object                #initialize background image
+
+        self.canvas.bg_image=self.bg_photo
+        self.canvas.pet_image=self.pet_photo
+
+        self.canvas.create_image(0, 0, image=self.canvas.bg_image, anchor=tk.NW)
+        self.pet = self.canvas.create_image(50, 150, image=self.canvas.pet_image, anchor=tk.CENTER)             #create pet image on canvas
 
 class PetEntryWidget(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
+        self.parent = parent
+
 
         self.Pet_name_label = ttk.Label(self, text=("Pet Name: "))
         self.Pet_name_entry = ttk.Entry(self)
@@ -74,13 +86,17 @@ class PetEntryWidget(ttk.Frame):
 class TamagachiInfoWidget(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
+        self.parent = parent
+
 
         self.Tamagachi_name_label = ttk.Label(self, text=("Name: " + str(parent.controller.Tamagachi.name)))
         self.Tamagachi_gender_label = ttk.Label(self, text=("Gender: " + str(parent.controller.Tamagachi.gender)))
+        self.Tamagachi_happiness_label = ttk.Label(self, text=("Happiness: " + str(parent.controller.Tamagachi.happiness)))
 
 class StartButtonWidget(ttk.Frame):
     def __init__(self, parent, PetInfo):
         super().__init__(parent)
+        self.parent = parent
 
         self.Start_button = ttk.Button(self, text="Start", 
                                         command=lambda: [
@@ -88,9 +104,44 @@ class StartButtonWidget(ttk.Frame):
                                             parent.controller.Tamagachi.set_name(PetInfo.Pet_name_entry.get()),
                                             start_game])
 
+class InteractionWidget(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+
+        choice = tk.StringVar()
+        self.interaction_choice = ttk.Combobox(self, textvariable=choice)
+        self.interaction_choice['values'] = parent.controller.Tamagachi.interactions
+
+        self.interaction_button = ttk.Button(self, text="Interact", command=lambda: [
+                                                                        self.execute_interaction,
+                                                                        ])
+
+        self.game_message = ttk.Label(self,text="temp")
+
+    def execute_interaction(self):
+        interaction = self.interaction_choice.get()
+        if interaction == "Feed":
+            interaction_msg = self.parent.controller.Tamagachi.feed()
+        elif interaction == "Hug":
+            interaction_msg = self.parent.controller.Tamagachi.hug()
+        elif interaction == "Check Status":
+            interaction_msg = self.parent.controller.Tamagachi.check_status()
+
+        self.game_message.config(text=interaction_msg)
+        self.after(3000, lambda: self.game_message.config(text="")) #clear message after 3 seconds
+        print(interaction_msg)
+
+
+
+    
+
+
 class BackButtonWidget(ttk.Frame):
     def __init__(self, parent, prev_frame):
         super().__init__(parent)
+        self.parent = parent
+
         self.Back_button = ttk.Button(
             self, 
             text="Back", 
@@ -100,6 +151,8 @@ class BackButtonWidget(ttk.Frame):
 class QuitGameButtonWidget(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
+        self.parent = parent
+
         self.Quit_button = ttk.Button(
             self,
             text="Quit",
