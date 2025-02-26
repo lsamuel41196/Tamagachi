@@ -26,7 +26,17 @@ def get_frame_classes(file_path):
 def determineNextFrame():
      pass
 
-def getImagePath(image_name):
+def getImagePath(image_name) -> str:
+     
+     """
+     Gets the file path of an image based on the image name.
+
+     Args:
+        image_name (str): The name of the image file.
+
+     Returns:
+        str: The file path of the image
+     """
 
      imagePath = str(Path().absolute() / "images" / image_name)
 

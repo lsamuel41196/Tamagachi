@@ -4,14 +4,15 @@ from PIL import Image, ImageTk
 from pathlib import Path
 
 from utils.general_functions import getImagePath
-from utils.button_functions import start_game, set_gender
+from utils.button_functions import start_game
 
 
 class PhotoObject():
-    def __init__(self, **kwargs):
-
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+    def __init__(self, image_name, image_size):
+        self.image_name = image_name
+        self.image_size = image_size
+        # for key, value in kwargs.items():
+        #     setattr(self, key, value)
 
         self.image_path = getImagePath(self.image_name)
         self.image_object = Image.open(self.image_path)
@@ -31,7 +32,6 @@ class ImageWidget(ttk.Frame):
             self.photo = PhotoObject(**kwargs).photo_object
             self.image_label = ttk.Label(self, image=self.photo)
 
-
 class CanvasWidget(ttk.Frame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent)
@@ -39,27 +39,27 @@ class CanvasWidget(ttk.Frame):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        self.canvas = tk.Canvas(self, width=self.image_size[0], height=self.image_size[1], bg="white")
-        self.photo = PhotoObject(**kwargs).photo_object
+        self.canvas = tk.Canvas(self, width=self.pet_image_size[0], height=self.pet_image_size[1])
+        self.photo = PhotoObject(self.pet_image_name, self.pet_image_size).photo_object
         self.canvas.create_image(0, 0, image=self.photo, anchor="nw")
 
-class PetInfoWidget(ttk.Frame):
+class PetEntryWidget(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.Pet_name_label = ttk.Label(self, text="Pet Name: " + parent.controller.Tamagachi.name)
+        self.Pet_name_label = ttk.Label(self, text=("Pet Name: "))
         self.Pet_name_entry = ttk.Entry(self)
-        self.Pet_gender_label = ttk.Label(self, text="Gender: " + parent.controller.Tamagachi.gender)
+        self.Pet_gender_label = ttk.Label(self, text=("Gender: "))
 
-        # TODO: Add icons to the buttons
+        # TODO: Add icons to the buttons, female button not working
         
         self.Pet_gender_male_button = ttk.Button(self, text = "Male", 
-                                                 image=PhotoObject(image_name="icons8-male-50.png").photo_object, 
+                                                 image=PhotoObject(image_name="icons8-male-50.png", image_size=(50,50)).photo_object, 
                                                  command=lambda:[parent.controller.Tamagachi.set_gender("Male")]
                                                  )
         
         self.Pet_gender_female_button = ttk.Button(self, text = "Female", 
-                                                   image=PhotoObject(image_name="icons8-female-50.png").photo_object, 
+                                                   image=PhotoObject(image_name="icons8-female-50.png", image_size=(50,50)).photo_object, 
                                                    command=lambda:[parent.controller.Tamagachi.set_gender("Female")]
                                                    )
         
@@ -71,6 +71,12 @@ class PetInfoWidget(ttk.Frame):
         male icon link: https://img.icons8.com/?size=100&id=1814&format=png&color=000000```
         '''
 
+class TamagachiInfoWidget(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.Tamagachi_name_label = ttk.Label(self, text=("Name: " + str(parent.controller.Tamagachi.name)))
+        self.Tamagachi_gender_label = ttk.Label(self, text=("Gender: " + str(parent.controller.Tamagachi.gender)))
 
 class StartButtonWidget(ttk.Frame):
     def __init__(self, parent, PetInfo):

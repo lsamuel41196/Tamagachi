@@ -1,8 +1,8 @@
 class Tamagachi:
     def __init__(self):
 
-        self.name = ""
-        self.gender = ""
+        self.name = "Temp"
+        self.gender = "Male"
         self.happiness = 5  # Starts with moderate happiness
 
         self.image_name = "orange_cat2.png"
@@ -12,17 +12,23 @@ class Tamagachi:
 
     def set_name(self, name):
         self.name = name
-        print("Name changed to " + name)
+        print("Name changed to " + self.name)
     
-    def set_gender(self, gender):
-        if gender != "Male" or "Female":
-            self.gender = None
+    def set_gender(self, gender:str):
+        """
+        This function sets the gender of the tamagachi object
+        """
+
+        allowed_genders = ["Male", "Female"]
+
+        if gender not in allowed_genders:
+            raise ValueError(f'Invalid gender: {gender}. Gender must be male or female')
         else:
             self.gender = gender
 
-        print("Gender changed to " + gender)
+        print("Gender changed to " +  self.gender)
 
-    def get_gender(self):
+    def get_gender(self) -> str:
         return self.gender
     
     def feed(self):
