@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 from pathlib import Path
 
 from utils.general_functions import getImagePath
-from utils.button_functions import start_game
+from utils.button_functions import *
 
 
 class PhotoObject():
@@ -89,20 +89,40 @@ class TamagachiInfoWidget(ttk.Frame):
         self.parent = parent
 
 
-        self.Tamagachi_name_label = ttk.Label(self, text=("Name: " + str(parent.controller.Tamagachi.name)))
-        self.Tamagachi_gender_label = ttk.Label(self, text=("Gender: " + str(parent.controller.Tamagachi.gender)))
-        self.Tamagachi_happiness_label = ttk.Label(self, text=("Happiness: " + str(parent.controller.Tamagachi.happiness)))
+        self.Tamagachi_name_label = ttk.Label(self)
+        self.Tamagachi_gender_label = ttk.Label(self)
+        self.Tamagachi_happiness_label = ttk.Label(self)
+
+        self.update_info()
+
+    def update_info(self):
+        """Rfresh the displayed pet info"""
+
+        self.Tamagachi_name_label.config(text=f"Name: {self.parent.controller.Tamagachi.name}")
+        self.Tamagachi_gender_label.config(text=f"Gender: {self.parent.controller.Tamagachi.gender}")
+        self.Tamagachi_happiness_label.config(text=f"Happiness: {self.parent.controller.Tamagachi.happiness}")
 
 class StartButtonWidget(ttk.Frame):
     def __init__(self, parent, PetInfo):
         super().__init__(parent)
         self.parent = parent
 
+        self.PetInfo = PetInfo
+
         self.Start_button = ttk.Button(self, text="Start", 
-                                        command=lambda: [
-                                            parent.controller.show_frame("GameWorldFrame"),
-                                            parent.controller.Tamagachi.set_name(PetInfo.Pet_name_entry.get()),
-                                            start_game])
+                                        command=self.start_game)
+        
+    def start_game(self):
+        self.parent.controller.Tamagachi.set_name(self.PetInfo.Pet_name_entry.get())
+
+        # Update the GameWorldFrame to reflect changes
+        self.parent.controller.frames["GameWorldFrame"].tamagachi_info_widget.update_info()
+
+        # Switch to the game world frame
+        self.parent.controller.show_frame("GameWorldFrame")
+
+
+
 
 class InteractionWidget(ttk.Frame):
     def __init__(self, parent):
@@ -113,28 +133,30 @@ class InteractionWidget(ttk.Frame):
         self.interaction_choice = ttk.Combobox(self, textvariable=choice)
         self.interaction_choice['values'] = parent.controller.Tamagachi.interactions
 
-        self.interaction_button = ttk.Button(self, text="Interact", command=lambda: [
-                                                                        self.execute_interaction,
-                                                                        ])
+        self.interaction_button = ttk.Button(self, text="Interact", command=self.execute_interaction)
 
-        self.game_message = ttk.Label(self,text="temp")
+        self.game_message = ttk.Label(self)
 
     def execute_interaction(self):
         interaction = self.interaction_choice.get()
         if interaction == "Feed":
             interaction_msg = self.parent.controller.Tamagachi.feed()
+            print("pet fed")
         elif interaction == "Hug":
             interaction_msg = self.parent.controller.Tamagachi.hug()
+            print("pet hugged")
         elif interaction == "Check Status":
             interaction_msg = self.parent.controller.Tamagachi.check_status()
+            print("pet check_status")
+        else:
+            interaction_msg = "invalid command"
+
+        self.parent.controller.frames["GameWorldFrame"].tamagachi_info_widget.update_info()
 
         self.game_message.config(text=interaction_msg)
-        self.after(3000, lambda: self.game_message.config(text="")) #clear message after 3 seconds
+        self.after(10000, lambda: self.game_message.config(text="")) #clear message after 3 seconds
         print(interaction_msg)
 
-
-
-    
 
 
 class BackButtonWidget(ttk.Frame):

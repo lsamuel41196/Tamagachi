@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
 from utils.general_functions import getImagePath
-from utils.button_functions import start_game, load_game
+from utils.button_functions import load_game
 
 from utils.widgets import *
 
@@ -51,11 +51,6 @@ class NewGameSetupFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-
-        # # image widget
-        # self.cat_image_widget = ImageWidget(self, image_name="orange_cat2.png", image_size=(300, 300))
-        # self.cat_image_widget.image_label.grid(row=0, column=0)
-        # self.cat_image_widget.grid()
 
         self.game_world_widget = CanvasWidget(self, 
                                               pet_image_name=controller.Tamagachi.image_name, 
@@ -129,6 +124,7 @@ class GameWorldFrame(tk.Frame):
         self.interaction_widget = InteractionWidget(self)
         self.interaction_widget.interaction_choice.grid(row=4, column=0)
         self.interaction_widget.interaction_button.grid(row=4, column=1)
+        self.interaction_widget.grid()
 
         #message widget
         self.interaction_widget.game_message.grid(row=5, column=0)

@@ -36,14 +36,14 @@ class Tamagachi:
     def feed(self) -> str:
         self.happiness += 2
 
-        message = f"{self.name} enjoys the food! 😋 Happiness: {self.happiness}"
+        message = f"{self.name} enjoys the food! 😋"
 
         return (message)
 
     def hug(self) -> str:
         self.happiness += 3
 
-        message = f"{self.name} feels loved! 🤗 Happiness: {self.happiness}"
+        message = f"{self.name} feels loved! 🤗"
 
         return (message)
 
