@@ -9,6 +9,7 @@ from utils.widgets import *
 
 
 #TODO figure out why canvas widget is not working right
+#TODO figure out why the game time and play time attributes aren't working right
 
 
 
@@ -118,22 +119,26 @@ class GameWorldFrame(tk.Frame):
         self.tamagachi_info_widget.Tamagachi_name_label.grid(row=1, column=0)
         self.tamagachi_info_widget.Tamagachi_gender_label.grid(row=2, column=0)
         self.tamagachi_info_widget.Tamagachi_happiness_label.grid(row=3, column=0)
+        self.tamagachi_info_widget.Tamagachi_time_label.grid(row=4, column=0)
+        self.update_play_time()
         self.tamagachi_info_widget.grid()
 
         #interact buttons
         self.interaction_widget = InteractionWidget(self)
-        self.interaction_widget.interaction_choice.grid(row=4, column=0)
-        self.interaction_widget.interaction_button.grid(row=4, column=1)
+        self.interaction_widget.interaction_choice.grid(row=5, column=0)
+        self.interaction_widget.interaction_button.grid(row=5, column=1)
         self.interaction_widget.grid()
 
         #message widget
-        self.interaction_widget.game_message.grid(row=5, column=0)
+        self.interaction_widget.game_message.grid(row=6, column=0)
         self.interaction_widget.grid()
 
         #back buttons
         self.backbuttonwidget = BackButtonWidget(self, prev_frame="NewGameSetupFrame")
-        self.backbuttonwidget.Back_button.grid(row=6, column=0)
-        self.backbuttonwidget.grid()
+        self.backbuttonwidget.Back_button.grid(row=7, column=0)
+        self.backbuttonwidget.grid()        
 
+    def update_play_time(self):
+        """Update play time every second"""
 
-        pass
+        self.after(1000, self.controller.Tamagachi.update_play_time())

@@ -6,7 +6,7 @@ from Tamagachi_Class import Tamagachi
 
 
 class App(tk.Tk):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs): 
 
         # main setup
         super().__init__()

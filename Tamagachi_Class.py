@@ -1,3 +1,5 @@
+import time
+
 class Tamagachi:
     def __init__(self):
 
@@ -8,7 +10,16 @@ class Tamagachi:
         self.image_name = "orange_cat2.png"
         self.image_size = (300, 300)
 
+        self.start_time = float()
+        self.play_time = {
+            "Hours": None,
+            "Minutes": None,
+            "Seconds": None
+        }
+
         self.interactions = ["Feed", "Hug", "Check Status"]
+
+        self.update_play_time()
 
         print("tamagachi object created!")
 
@@ -56,3 +67,23 @@ class Tamagachi:
             message = "{self.name} is feeling lonely... 😢 Give it some love!"
         
         return (message)
+
+    def update_play_time(self):
+        current_time = time.time()
+        elapsed_time = current_time - self.start_time
+        minutes, seconds = divmod(int(elapsed_time), 60)
+        hours, minutes = divmod(minutes, 60)
+
+        self.play_time["Hours"] = hours
+        self.play_time["Minutes"] = minutes
+        self.play_time["Seconds"] = seconds
+        
+    def print_play_time(self) -> str:
+
+        hours = str(self.play_time["Hours"])
+        minutes = str(self.play_time["Minutes"])
+        seconds = str(self.play_time["Seconds"])
+
+        play_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+
+        return play_time_string

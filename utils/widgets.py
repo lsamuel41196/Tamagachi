@@ -1,4 +1,5 @@
 import tkinter as tk
+import time
 from tkinter import ttk
 from PIL import Image, ImageTk
 from pathlib import Path
@@ -92,6 +93,7 @@ class TamagachiInfoWidget(ttk.Frame):
         self.Tamagachi_name_label = ttk.Label(self)
         self.Tamagachi_gender_label = ttk.Label(self)
         self.Tamagachi_happiness_label = ttk.Label(self)
+        self.Tamagachi_time_label = ttk.Label(self, text = f"Play Time: {self.parent.controller.Tamagachi.print_play_time()}")
 
         self.update_info()
 
@@ -114,6 +116,9 @@ class StartButtonWidget(ttk.Frame):
         
     def start_game(self):
         self.parent.controller.Tamagachi.set_name(self.PetInfo.Pet_name_entry.get())
+
+        self.parent.controller.Tamagachi.start_time = time.time()
+        print(self.parent.controller.Tamagachi.start_time)
 
         # Update the GameWorldFrame to reflect changes
         self.parent.controller.frames["GameWorldFrame"].tamagachi_info_widget.update_info()
@@ -156,8 +161,6 @@ class InteractionWidget(ttk.Frame):
         self.game_message.config(text=interaction_msg)
         self.after(10000, lambda: self.game_message.config(text="")) #clear message after 3 seconds
         print(interaction_msg)
-
-
 
 class BackButtonWidget(ttk.Frame):
     def __init__(self, parent, prev_frame):
