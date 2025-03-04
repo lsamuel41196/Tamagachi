@@ -6,6 +6,7 @@ from pathlib import Path
 
 from utils.general_functions import getImagePath
 from utils.button_functions import *
+from tamagachi_dictionaries import tamagachi_avatars
 
 
 class PhotoObject():
@@ -76,8 +77,10 @@ class PetEntryWidget(ttk.Frame):
                                                    command=lambda:[parent.controller.Tamagachi.set_gender("Female")]
                                                    )
         
-
-
+        self.Pet_avatar_label = ttk.Label(self, text=("Avatar: "))
+        avatar_choice = tk.StringVar()
+        self.Pet_avatar_choice = ttk.Combobox(self, textvariable=avatar_choice)
+        self.Pet_avatar_choice['values'] = list(tamagachi_avatars.keys())
         
         '''
         female icon link: https://img.icons8.com/?size=100&id=1816&format=png&color=000000

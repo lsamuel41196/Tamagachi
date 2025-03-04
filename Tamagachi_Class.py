@@ -7,6 +7,8 @@ class Tamagachi:
         self.gender = "Male"
         self.happiness = 5  # Starts with moderate happiness
 
+        self.avatar = "Orange Cat 2"
+
         self.image_name = "orange_cat2.png"
         self.image_size = (300, 300)
 
@@ -77,7 +79,7 @@ class Tamagachi:
         self.play_time["Hours"] = hours
         self.play_time["Minutes"] = minutes
         self.play_time["Seconds"] = seconds
-        
+
     def print_play_time(self) -> str:
 
         hours = str(self.play_time["Hours"])
