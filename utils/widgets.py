@@ -6,7 +6,7 @@ from pathlib import Path
 
 from utils.general_functions import getImagePath
 from utils.button_functions import *
-from tamagachi_dictionaries import tamagachi_avatars
+from game_dictionaries import tamagachi_avatars, background_images
 
 
 class PhotoObject():
@@ -40,7 +40,7 @@ class CanvasWidget(ttk.Frame):
         super().__init__(parent)
         self.parent = parent
 
-
+        #get the keys and values from the initialization of the canvas widget. Usually pet_name, size, and background image name and size
         for key, value in kwargs.items():
             setattr(self, key, value)
         
@@ -52,17 +52,36 @@ class CanvasWidget(ttk.Frame):
         self.canvas.bg_image=self.bg_photo
         self.canvas.pet_image=self.pet_photo
 
-        self.canvas.create_image(0, 0, image=self.canvas.bg_image, anchor=tk.NW)
-        self.pet = self.canvas.create_image(50, 150, image=self.canvas.pet_image, anchor=tk.CENTER)             #create pet image on canvas
+        self.bg = self.canvas.create_image(0, 0, image=self.canvas.bg_image, anchor=tk.NW)
+        self.pet = self.canvas.create_image(50, 150, image=self.canvas.pet_image, anchor=tk.CENTER)     #create pet image on canvas
+
+    def update_canvas(self, new_pet_image, new_bg_image):
+        """
+        update pet and background images dynamically
+        """
+
+        if new_pet_image:
+            self.pet_photo = PhotoObject(new_pet_image, self.pet_image_size).photo_object
+            self.canvas.itemconfig(self.pet, image=self.pet_photo)
+            self.canvas.pet_image = self.pet_photo  
+
+        if new_bg_image:
+            self.bg_photo = PhotoObject(new_bg_image, self.bg_image_size).photo_object
+            self.canvas.itemconfig(self.bg, image=self.bg_photo)
+            self.canvas.bg_image = self.bg_photo  
+
 
 class PetEntryWidget(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
 
-
+        #create pet name label and entry 
         self.Pet_name_label = ttk.Label(self, text=("Pet Name: "))
         self.Pet_name_entry = ttk.Entry(self)
+
+
+        #create pet gender label and button
         self.Pet_gender_label = ttk.Label(self, text=("Gender: "))
 
         # TODO: Add icons to the buttons, female button not working
@@ -77,15 +96,42 @@ class PetEntryWidget(ttk.Frame):
                                                    command=lambda:[parent.controller.Tamagachi.set_gender("Female")]
                                                    )
         
-        self.Pet_avatar_label = ttk.Label(self, text=("Avatar: "))
-        avatar_choice = tk.StringVar()
-        self.Pet_avatar_choice = ttk.Combobox(self, textvariable=avatar_choice)
-        self.Pet_avatar_choice['values'] = list(tamagachi_avatars.keys())
-        
         '''
         female icon link: https://img.icons8.com/?size=100&id=1816&format=png&color=000000
         male icon link: https://img.icons8.com/?size=100&id=1814&format=png&color=000000```
         '''
+        
+        #create pet avatar choice label and combobox
+        self.Pet_avatar_label = ttk.Label(self, text=("Avatar: "))
+        self.avatar_choice = tk.StringVar()
+        self.Pet_avatar_choice = ttk.Combobox(self, textvariable=self.avatar_choice)
+        petAvatarChoices = list(tamagachi_avatars.keys())
+        self.Pet_avatar_choice['values'] = petAvatarChoices
+        self.Pet_avatar_choice.set(petAvatarChoices[0])
+        self.Pet_avatar_choice.bind("<<ComboboxSelected>>", self.update_game_world)
+
+        #create background choice label and combobox
+        self.Game_background_label = ttk.Label(self, text=("Background: "))
+        self.background_choice = tk.StringVar()
+        self.Game_background_choice = ttk.Combobox(self, textvariable=self.background_choice)
+        gameBgChoices = list(background_images.keys())
+        self.Game_background_choice['values'] = gameBgChoices
+        self.Game_background_choice.set(gameBgChoices[0])
+        self.Game_background_choice.bind("<<ComboboxSelected>>", self.update_game_world)
+    
+    def update_game_world(self, event=None):
+        """
+        Update the game world canvas when selections change
+        """
+
+        pet_image = tamagachi_avatars[self.avatar_choice.get()]
+        bg_image = background_images[self.background_choice.get()]
+
+        game_frame = self.parent.controller.frames["NewGameSetupFrame"]
+        game_frame.game_world_widget.update_canvas(pet_image, bg_image)
+        
+        
+
 
 class TamagachiInfoWidget(ttk.Frame):
     def __init__(self, parent):
@@ -111,26 +157,25 @@ class StartButtonWidget(ttk.Frame):
     def __init__(self, parent, PetInfo):
         super().__init__(parent)
         self.parent = parent
-
         self.PetInfo = PetInfo
-
-        self.Start_button = ttk.Button(self, text="Start", 
-                                        command=self.start_game)
+        self.Start_button = ttk.Button(self, text="Start", command=self.start_game)
         
     def start_game(self):
         self.parent.controller.Tamagachi.set_name(self.PetInfo.Pet_name_entry.get())
-
         self.parent.controller.Tamagachi.start_time = time.time()
-        print(self.parent.controller.Tamagachi.start_time)
+
+        #Pass selected pet avatar and background to GameWorldFrame
+        pet_image = tamagachi_avatars[self.PetInfo.avatar_choice.get()]
+        bg_image = background_images[self.PetInfo.background_choice.get()]
+
+        game_frame = self.parent.controller.frames["GameWorldFrame"]
 
         # Update the GameWorldFrame to reflect changes
-        self.parent.controller.frames["GameWorldFrame"].tamagachi_info_widget.update_info()
+        game_frame.game_world_widget.update_canvas(pet_image, bg_image)
+        game_frame.tamagachi_info_widget.update_info()
 
         # Switch to the game world frame
         self.parent.controller.show_frame("GameWorldFrame")
-
-
-
 
 class InteractionWidget(ttk.Frame):
     def __init__(self, parent):
@@ -149,13 +194,10 @@ class InteractionWidget(ttk.Frame):
         interaction = self.interaction_choice.get()
         if interaction == "Feed":
             interaction_msg = self.parent.controller.Tamagachi.feed()
-            print("pet fed")
         elif interaction == "Hug":
             interaction_msg = self.parent.controller.Tamagachi.hug()
-            print("pet hugged")
         elif interaction == "Check Status":
             interaction_msg = self.parent.controller.Tamagachi.check_status()
-            print("pet check_status")
         else:
             interaction_msg = "invalid command"
 
@@ -163,7 +205,6 @@ class InteractionWidget(ttk.Frame):
 
         self.game_message.config(text=interaction_msg)
         self.after(10000, lambda: self.game_message.config(text="")) #clear message after 3 seconds
-        print(interaction_msg)
 
 class BackButtonWidget(ttk.Frame):
     def __init__(self, parent, prev_frame):

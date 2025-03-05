@@ -1,6 +1,5 @@
 import tkinter as tk
 from frame_classes import *
-from utils.general_functions import get_frame_classes
 from pathlib import Path
 from Tamagachi_Class import Tamagachi
 
@@ -22,9 +21,6 @@ class App(tk.Tk):
         self.Tamagachi = Tamagachi()
 
         self.frames = {}
-
-        # get all the frame classes
-        get_frame_classes(str(Path().absolute()) + r"\frames\frame_classes.py")
 
         for F in (StartFrame, NewGameSetupFrame, LoadGameSetupFrame, GameWorldFrame):
             page_name = F.__name__

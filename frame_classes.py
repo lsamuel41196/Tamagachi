@@ -69,19 +69,21 @@ class NewGameSetupFrame(tk.Frame):
         self.petinfo_widget.Pet_gender_label.grid(row=2, column=0)
         self.petinfo_widget.Pet_gender_male_button.grid(row=2, column=1)
         self.petinfo_widget.Pet_gender_female_button.grid(row=2, column=2)
-        self.petinfo_widget.Pet_avatar_label.grid(row=3, column = 0)
-        self.petinfo_widget.Pet_avatar_choice.grid(row=3, column = 1)
+        self.petinfo_widget.Pet_avatar_label.grid(row=3, column=0)
+        self.petinfo_widget.Pet_avatar_choice.grid(row=3, column=1)
+        self.petinfo_widget.Game_background_label.grid(row=4, column=0)
+        self.petinfo_widget.Game_background_choice.grid(row=4, column=1)
         self.petinfo_widget.grid()
 
 
         #start button
         self.startbuttonwidget = StartButtonWidget(self, self.petinfo_widget)
-        self.startbuttonwidget.Start_button.grid(row=4, column=0)
+        self.startbuttonwidget.Start_button.grid(row=5, column=0)
         self.startbuttonwidget.grid()
 
         #back button
         self.backbuttonwidget = BackButtonWidget(self, prev_frame="StartFrame")
-        self.backbuttonwidget.Back_button.grid(row=5, column=0)
+        self.backbuttonwidget.Back_button.grid(row=6, column=0)
         self.backbuttonwidget.grid()
 
 class LoadGameSetupFrame(tk.Frame):

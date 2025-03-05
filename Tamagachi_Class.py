@@ -7,9 +7,9 @@ class Tamagachi:
         self.gender = "Male"
         self.happiness = 5  # Starts with moderate happiness
 
-        self.avatar = "Orange Cat 2"
+        self.avatar = "Orange Cat 1"
 
-        self.image_name = "orange_cat2.png"
+        self.image_name = "orange_cat1.jpg"
         self.image_size = (300, 300)
 
         self.start_time = float()
@@ -23,11 +23,11 @@ class Tamagachi:
 
         self.update_play_time()
 
-        print("tamagachi object created!")
-
     def set_name(self, name):
+        """
+        This function sets the name of your tamagachi pet
+        """
         self.name = name
-        print("Name changed to " + self.name)
     
     def set_gender(self, gender:str):
         """
@@ -40,8 +40,6 @@ class Tamagachi:
             raise ValueError(f'Invalid gender: {gender}. Gender must be male or female')
         else:
             self.gender = gender
-
-        print("Gender changed to " +  self.gender)
 
     def get_gender(self) -> str:
         return self.gender
