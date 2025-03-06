@@ -3,13 +3,14 @@ from tkinter import ttk
 from pathlib import Path
 from utils.general_functions import getImagePath
 from utils.button_functions import load_game
-
+from game_dictionaries import tamagachi_avatars, background_images
 from utils.widgets import *
 
 
 
 #TODO figure out why canvas widget is not working right
 #TODO figure out why the game time and play time attributes aren't working right
+#TODO Add logo to startframe
 
 
 
@@ -18,15 +19,20 @@ class StartFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
+        self.logo_image_widget = ImageWidget(self, image_name = "GameLogo.png", image_size = (300,300))
+        self.logo_photo = self.logo_image_widget.photo
+        self.logo_image_widget.image_label.grid(row=0, column=0)
+        self.logo_image_widget.grid()
 
-        self.game_world_widget = CanvasWidget(self, 
-                                              pet_image_name=controller.Tamagachi.image_name, 
-                                              pet_image_size=controller.Tamagachi.image_size,
-                                              bg_image_name="front_lawn.jpg",
-                                              bg_image_size=(300,300)
-                                              )
-        self.game_world_widget.canvas.grid(row=0, column=0)
-        self.game_world_widget.grid()
+
+        # self.game_world_widget = CanvasWidget(self, 
+        #                                       pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
+        #                                       pet_image_size=controller.Tamagachi.image_size,
+        #                                       bg_image_name=background_images["Front Lawn"],
+        #                                       bg_image_size=(300,300)
+        #                                       )
+        # self.game_world_widget.canvas.grid(row=0, column=0)
+        # self.game_world_widget.grid()
 
         NewGameButton = ttk.Button(
             self, 
@@ -54,9 +60,9 @@ class NewGameSetupFrame(tk.Frame):
         self.controller = controller
 
         self.game_world_widget = CanvasWidget(self, 
-                                              pet_image_name=controller.Tamagachi.image_name, 
+                                              pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
                                               pet_image_size=controller.Tamagachi.image_size,
-                                              bg_image_name="front_lawn.jpg",
+                                              bg_image_name=background_images["Front Lawn"],
                                               bg_image_size=(300,300)
                                               )
         self.game_world_widget.canvas.grid(row=0, column=0)
@@ -110,9 +116,9 @@ class GameWorldFrame(tk.Frame):
 
         #game world widget
         self.game_world_widget = CanvasWidget(self, 
-                                              pet_image_name=controller.Tamagachi.image_name, 
+                                              pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
                                               pet_image_size=controller.Tamagachi.image_size,
-                                              bg_image_name="front_lawn.jpg",
+                                              bg_image_name=background_images["Front Lawn"],
                                               bg_image_size=(300,300)
                                               )
         self.game_world_widget.canvas.grid(row=0, column=0)
@@ -124,7 +130,6 @@ class GameWorldFrame(tk.Frame):
         self.tamagachi_info_widget.Tamagachi_gender_label.grid(row=2, column=0)
         self.tamagachi_info_widget.Tamagachi_happiness_label.grid(row=3, column=0)
         self.tamagachi_info_widget.Tamagachi_time_label.grid(row=4, column=0)
-        self.update_play_time()
         self.tamagachi_info_widget.grid()
 
         #interact buttons
@@ -140,9 +145,21 @@ class GameWorldFrame(tk.Frame):
         #back buttons
         self.backbuttonwidget = BackButtonWidget(self, prev_frame="NewGameSetupFrame")
         self.backbuttonwidget.Back_button.grid(row=7, column=0)
-        self.backbuttonwidget.grid()        
+        self.backbuttonwidget.grid()
 
-    def update_play_time(self):
-        """Update play time every second"""
+        self.update_game()
 
-        self.after(1000, self.controller.Tamagachi.update_play_time())
+    def update_game(self):
+
+        #check pet happiness and update pet image accordingly
+        if (self.controller.Tamagachi.get_happiness() >= 8):
+            print("happy")
+            self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["happy"])
+            pass
+        elif (self.controller.Tamagachi.get_happiness() <= 3):
+            print("sad")
+            pass
+
+
+        self.tamagachi_info_widget.update_info()                #update the tamagachi info widget
+        self.after(1000, self.update_game)                      #call the update_tamagachi_info_widget again after 1 second. Recursion?

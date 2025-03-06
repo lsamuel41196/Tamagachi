@@ -1,4 +1,5 @@
 import time
+from game_dictionaries import tamagachi_avatars
 
 class Tamagachi:
     def __init__(self):
@@ -8,20 +9,16 @@ class Tamagachi:
         self.happiness = 5  # Starts with moderate happiness
 
         self.avatar = "Orange Cat 1"
+        self.image_size = (150, 150)
 
-        self.image_name = "orange_cat1.jpg"
-        self.image_size = (300, 300)
-
-        self.start_time = float()
-        self.play_time = {
+        self.birth_time = float()
+        self.alive_time = {
             "Hours": None,
             "Minutes": None,
             "Seconds": None
         }
 
         self.interactions = ["Feed", "Hug", "Check Status"]
-
-        self.update_play_time()
 
     def set_name(self, name):
         """
@@ -44,6 +41,15 @@ class Tamagachi:
     def get_gender(self) -> str:
         return self.gender
     
+    def get_happiness(self) -> int:
+        """
+        get happiness of pet
+
+        Return: hapiness integer
+        """
+
+        return self.happiness
+
     def feed(self) -> str:
         self.happiness += 2
 
@@ -68,22 +74,26 @@ class Tamagachi:
         
         return (message)
 
-    def update_play_time(self):
+    def update_alive_time(self):
         current_time = time.time()
-        elapsed_time = current_time - self.start_time
-        minutes, seconds = divmod(int(elapsed_time), 60)
-        hours, minutes = divmod(minutes, 60)
+        elapsed_time = int(current_time - self.birth_time)
 
-        self.play_time["Hours"] = hours
-        self.play_time["Minutes"] = minutes
-        self.play_time["Seconds"] = seconds
+        hours = elapsed_time // 3600
+        minutes = (elapsed_time % 3600) // 60
+        seconds = elapsed_time % 60
 
-    def print_play_time(self) -> str:
+        self.alive_time["Hours"] = hours
+        self.alive_time["Minutes"] = minutes
+        self.alive_time["Seconds"] = seconds
 
-        hours = str(self.play_time["Hours"])
-        minutes = str(self.play_time["Minutes"])
-        seconds = str(self.play_time["Seconds"])
+    def print_alive_time(self) -> str:
 
-        play_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+        self.update_alive_time()
 
-        return play_time_string
+        hours = self.alive_time["Hours"]
+        minutes = self.alive_time["Minutes"]
+        seconds = self.alive_time["Seconds"]
+
+        alive_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
+
+        return alive_time_string

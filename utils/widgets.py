@@ -25,15 +25,32 @@ class PhotoObject():
         self.photo_object = ImageTk.PhotoImage(self.image_object)
 
 class ImageWidget(ttk.Frame):
+        """
+        Purpose of this class is to create an image label widget
+        """
         def __init__(self, parent, **kwargs):
+            """ 
+            Initialize ImageWidget with given kwargs parameters
+            image_name: file name of image
+            image_size: image size
+            """
+
             super().__init__(parent)
             self.parent = parent
 
-            for key, value in kwargs.items():
+            for key, value in kwargs.items():                
                 setattr(self, key, value)
 
             self.photo = PhotoObject(**kwargs).photo_object
             self.image_label = ttk.Label(self, image=self.photo)
+
+# class LogoWidget(ttk.Frame):
+#     def __init__(self, parent):
+#         super().__init__(parent)
+#         self.parent=parent
+
+#         logo_file_name = "GameLogo.png"
+#         self.logo_image_widget = ImageWidget(logo_file_name)
 
 class CanvasWidget(ttk.Frame):
     def __init__(self, parent, **kwargs):
@@ -52,21 +69,25 @@ class CanvasWidget(ttk.Frame):
         self.canvas.bg_image=self.bg_photo
         self.canvas.pet_image=self.pet_photo
 
-        self.bg = self.canvas.create_image(0, 0, image=self.canvas.bg_image, anchor=tk.NW)
-        self.pet = self.canvas.create_image(50, 150, image=self.canvas.pet_image, anchor=tk.CENTER)     #create pet image on canvas
+        self.bg = self.canvas.create_image(150, 150, image=self.canvas.bg_image)
+        self.pet = self.canvas.create_image(150, 200, image=self.canvas.pet_image)     #create pet image on canvas
 
-    def update_canvas(self, new_pet_image, new_bg_image):
+    def update_canvas(self, **kwargs):
         """
         update pet and background images dynamically
+
+        **kwargs
+        new_pet_image = pet_image
+        new_bg_image = bg_image
         """
 
-        if new_pet_image:
-            self.pet_photo = PhotoObject(new_pet_image, self.pet_image_size).photo_object
+        if kwargs["new_pet_image"]:
+            self.pet_photo = PhotoObject(kwargs["new_pet_image"], self.pet_image_size).photo_object
             self.canvas.itemconfig(self.pet, image=self.pet_photo)
             self.canvas.pet_image = self.pet_photo  
 
-        if new_bg_image:
-            self.bg_photo = PhotoObject(new_bg_image, self.bg_image_size).photo_object
+        if kwargs["new_bg_image"]:
+            self.bg_photo = PhotoObject(kwargs["new_bg_image"], self.bg_image_size).photo_object
             self.canvas.itemconfig(self.bg, image=self.bg_photo)
             self.canvas.bg_image = self.bg_photo  
 
@@ -124,11 +145,11 @@ class PetEntryWidget(ttk.Frame):
         Update the game world canvas when selections change
         """
 
-        pet_image = tamagachi_avatars[self.avatar_choice.get()]
+        pet_image = tamagachi_avatars[self.avatar_choice.get()]["default"]
         bg_image = background_images[self.background_choice.get()]
 
         game_frame = self.parent.controller.frames["NewGameSetupFrame"]
-        game_frame.game_world_widget.update_canvas(pet_image, bg_image)
+        game_frame.game_world_widget.update_canvas(new_pet_image = pet_image, new_bg_image = bg_image)
         
         
 
@@ -142,16 +163,17 @@ class TamagachiInfoWidget(ttk.Frame):
         self.Tamagachi_name_label = ttk.Label(self)
         self.Tamagachi_gender_label = ttk.Label(self)
         self.Tamagachi_happiness_label = ttk.Label(self)
-        self.Tamagachi_time_label = ttk.Label(self, text = f"Play Time: {self.parent.controller.Tamagachi.print_play_time()}")
+        self.Tamagachi_time_label = ttk.Label(self)
 
         self.update_info()
 
     def update_info(self):
-        """Rfresh the displayed pet info"""
+        """Refresh the displayed pet info"""
 
         self.Tamagachi_name_label.config(text=f"Name: {self.parent.controller.Tamagachi.name}")
         self.Tamagachi_gender_label.config(text=f"Gender: {self.parent.controller.Tamagachi.gender}")
         self.Tamagachi_happiness_label.config(text=f"Happiness: {self.parent.controller.Tamagachi.happiness}")
+        self.Tamagachi_time_label.config(text=f"Time Alive: {self.parent.controller.Tamagachi.print_alive_time()}")
 
 class StartButtonWidget(ttk.Frame):
     def __init__(self, parent, PetInfo):
@@ -161,17 +183,22 @@ class StartButtonWidget(ttk.Frame):
         self.Start_button = ttk.Button(self, text="Start", command=self.start_game)
         
     def start_game(self):
+
+        #get pet name
         self.parent.controller.Tamagachi.set_name(self.PetInfo.Pet_name_entry.get())
-        self.parent.controller.Tamagachi.start_time = time.time()
+
+        #get pet birth time
+        self.parent.controller.Tamagachi.birth_time = time.time()
+        self.parent.controller.Tamagachi.update_alive_time()
 
         #Pass selected pet avatar and background to GameWorldFrame
-        pet_image = tamagachi_avatars[self.PetInfo.avatar_choice.get()]
+        pet_image = tamagachi_avatars[self.PetInfo.avatar_choice.get()]["default"]
         bg_image = background_images[self.PetInfo.background_choice.get()]
 
         game_frame = self.parent.controller.frames["GameWorldFrame"]
 
         # Update the GameWorldFrame to reflect changes
-        game_frame.game_world_widget.update_canvas(pet_image, bg_image)
+        game_frame.game_world_widget.update_canvas(new_pet_image = pet_image,new_bg_image = bg_image)
         game_frame.tamagachi_info_widget.update_info()
 
         # Switch to the game world frame
@@ -226,3 +253,4 @@ class QuitGameButtonWidget(ttk.Frame):
             self,
             text="Quit",
             command=parent.controller.quit_game)
+        
