@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
-from utils.general_functions import getImagePath
+from utils.general_functions import getImagePath, clamp
 from utils.button_functions import load_game
 from game_dictionaries import tamagachi_avatars, background_images
 from utils.widgets import *
@@ -151,15 +151,21 @@ class GameWorldFrame(tk.Frame):
 
     def update_game(self):
 
-        #check pet happiness and update pet image accordingly
-        if (self.controller.Tamagachi.get_happiness() >= 8):
-            print("happy")
-            self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["happy"])
-            pass
-        elif (self.controller.Tamagachi.get_happiness() <= 3):
-            print("sad")
-            pass
-
-
+        self.update_pet()
         self.tamagachi_info_widget.update_info()                #update the tamagachi info widget
-        self.after(1000, self.update_game)                      #call the update_tamagachi_info_widget again after 1 second. Recursion?
+        self.after(100, self.update_game)                      #call the update_tamagachi_info_widget again after 1 second. Recursion?
+
+    def update_pet(self):
+
+        #check pet happiness and update pet image accordingly
+        if (self.controller.Tamagachi.get_happiness() >= 7):
+            self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["happy"]) 
+
+        elif (self.controller.Tamagachi.get_happiness() <= 3):
+            self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["sad"])
+
+        else:
+            self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["default"])
+        
+        self.controller.Tamagachi.happiness = clamp(self.controller.Tamagachi.get_happiness(), 0, 10)
+            

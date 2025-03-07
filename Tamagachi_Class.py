@@ -6,7 +6,9 @@ class Tamagachi:
 
         self.name = "Temp"
         self.gender = "Male"
-        self.happiness = 5  # Starts with moderate happiness
+        self.happiness = 5      #starts with moderate happiness 
+        self.energy = 10        #start with high energy
+        self.hunger = 10        #hunger for food
 
         self.avatar = "Orange Cat 1"
         self.image_size = (150, 150)
@@ -18,7 +20,7 @@ class Tamagachi:
             "Seconds": None
         }
 
-        self.interactions = ["Feed", "Hug", "Check Status"]
+        self.interactions = ["Feed", "Hug", "Scold", "Check Status"]
 
     def set_name(self, name):
         """
@@ -61,6 +63,13 @@ class Tamagachi:
         self.happiness += 3
 
         message = f"{self.name} feels loved! 🤗"
+
+        return (message)
+
+    def scold(self) -> str:
+        self.happiness -= 1
+
+        message = f"{self.name} is flustered 😢"
 
         return (message)
 

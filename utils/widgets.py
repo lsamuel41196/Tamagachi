@@ -44,14 +44,6 @@ class ImageWidget(ttk.Frame):
             self.photo = PhotoObject(**kwargs).photo_object
             self.image_label = ttk.Label(self, image=self.photo)
 
-# class LogoWidget(ttk.Frame):
-#     def __init__(self, parent):
-#         super().__init__(parent)
-#         self.parent=parent
-
-#         logo_file_name = "GameLogo.png"
-#         self.logo_image_widget = ImageWidget(logo_file_name)
-
 class CanvasWidget(ttk.Frame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent)
@@ -81,12 +73,12 @@ class CanvasWidget(ttk.Frame):
         new_bg_image = bg_image
         """
 
-        if kwargs["new_pet_image"]:
+        if kwargs.get("new_pet_image"):
             self.pet_photo = PhotoObject(kwargs["new_pet_image"], self.pet_image_size).photo_object
             self.canvas.itemconfig(self.pet, image=self.pet_photo)
             self.canvas.pet_image = self.pet_photo  
 
-        if kwargs["new_bg_image"]:
+        if kwargs.get("new_bg_image"):
             self.bg_photo = PhotoObject(kwargs["new_bg_image"], self.bg_image_size).photo_object
             self.canvas.itemconfig(self.bg, image=self.bg_photo)
             self.canvas.bg_image = self.bg_photo  
@@ -223,6 +215,8 @@ class InteractionWidget(ttk.Frame):
             interaction_msg = self.parent.controller.Tamagachi.feed()
         elif interaction == "Hug":
             interaction_msg = self.parent.controller.Tamagachi.hug()
+        elif interaction == "Scold":
+            interaction_msg = self.parent.controller.Tamagachi.scold()
         elif interaction == "Check Status":
             interaction_msg = self.parent.controller.Tamagachi.check_status()
         else:

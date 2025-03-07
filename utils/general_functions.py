@@ -41,3 +41,14 @@ def getImagePath(image_name) -> str:
      imagePath = str(Path().absolute() / "images" / image_name)
 
      return imagePath
+
+def clamp(value, min_value, max_value) -> int:
+    """
+    This method clamps the value in a certain range
+    
+    params:
+        value - value to be clamped
+        min_value - minimum bound
+        max_value - maximum bound
+    """
+    return(max(min_value, min(value, max_value)))
