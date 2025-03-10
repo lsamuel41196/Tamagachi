@@ -1,5 +1,6 @@
 import inspect
 from pathlib import Path
+from tkinter import messagebox
 
 
 def get_frame_classes(file_path):
@@ -52,3 +53,15 @@ def clamp(value, min_value, max_value) -> int:
         max_value - maximum bound
     """
     return(max(min_value, min(value, max_value)))
+
+
+def show_popup(title: str, message: str):
+    """
+    This method shows a pop up message in the game
+
+    params:
+        title[str]: title of the dialog window 
+        message[str]: shows the message of the window
+    """
+
+    messagebox.showinfo(title, message)

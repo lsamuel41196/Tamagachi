@@ -238,6 +238,16 @@ class BackButtonWidget(ttk.Frame):
             command=lambda: parent.controller.show_frame(prev_frame)
             )
         
+class SaveGameButtonWidget(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+
+        self.Save_button = ttk.Button(
+            self,
+            text="Save Game",
+            command=parent.controller.save_game)
+        
 class QuitGameButtonWidget(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)

@@ -5,7 +5,7 @@ class Tamagachi:
     def __init__(self):
 
         self.name = "Temp"
-        self.gender = "Male"
+        self.gender = ""
         self.happiness = 5      #starts with moderate happiness 
         self.energy = 10        #start with high energy
         self.hunger = 10        #hunger for food

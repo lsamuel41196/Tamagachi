@@ -142,10 +142,20 @@ class GameWorldFrame(tk.Frame):
         self.interaction_widget.game_message.grid(row=6, column=0)
         self.interaction_widget.grid()
 
-        #back buttons
-        self.backbuttonwidget = BackButtonWidget(self, prev_frame="NewGameSetupFrame")
-        self.backbuttonwidget.Back_button.grid(row=7, column=0)
-        self.backbuttonwidget.grid()
+        #save game widget
+        self.savebuttonwidget = SaveGameButtonWidget(self)
+        self.savebuttonwidget.Save_button.grid(row=7, column=0)
+        self.savebuttonwidget.grid()
+
+        #quit game widget
+        self.quitbuttonwidget = QuitGameButtonWidget(self)
+        self.quitbuttonwidget.Quit_button.grid(row=8, column=0)
+        self.quitbuttonwidget.grid()
+
+        # #back buttons
+        # self.backbuttonwidget = BackButtonWidget(self, prev_frame="NewGameSetupFrame")
+        # self.backbuttonwidget.Back_button.grid(row=7, column=0)
+        # self.backbuttonwidget.grid()
 
         self.update_game()
 
