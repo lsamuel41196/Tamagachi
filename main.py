@@ -41,31 +41,6 @@ class App(tk.Tk):
         '''Show a frame for the given page name'''
         frame = self.frames[page_name]
         frame.tkraise()
-
-    def save_game(self):
-        """
-        Function saves the game
-        """
-
-        filepath = tk.filedialog.asksaveasfilename(
-            title="Save game as...",
-            initialdir= str(Path.cwd()) + r"\saved_games",
-            filetypes = (
-            ("JSON Files","*.json"),
-            ),
-            defaultextension="json"
-        )
-
-        if filepath:
-            with open(filepath, 'w') as f:
-                json.dump(
-                    {"score": 0,
-                    "level": 1,
-                    "player_name": "Player1"},
-                    f
-                    )
-                show_popup("Game Message", "Game saved!")
-
         
 
     def quit_game(self):

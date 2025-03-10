@@ -142,8 +142,9 @@ class GameWorldFrame(tk.Frame):
         self.interaction_widget.game_message.grid(row=6, column=0)
         self.interaction_widget.grid()
 
+
         #save game widget
-        self.savebuttonwidget = SaveGameButtonWidget(self)
+        self.savebuttonwidget = SaveGameButtonWidget(self, controller.Tamagachi.__dict__)
         self.savebuttonwidget.Save_button.grid(row=7, column=0)
         self.savebuttonwidget.grid()
 

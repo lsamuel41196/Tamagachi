@@ -4,7 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from pathlib import Path
 
-from utils.general_functions import getImagePath
+from utils.general_functions import getImagePath, save_game
 from utils.button_functions import *
 from game_dictionaries import tamagachi_avatars, background_images
 
@@ -239,14 +239,14 @@ class BackButtonWidget(ttk.Frame):
             )
         
 class SaveGameButtonWidget(ttk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, tamagachi_info):
         super().__init__(parent)
         self.parent = parent
 
         self.Save_button = ttk.Button(
             self,
             text="Save Game",
-            command=parent.controller.save_game)
+            command=lambda: save_game(tamagachi_info))
         
 class QuitGameButtonWidget(ttk.Frame):
     def __init__(self, parent):

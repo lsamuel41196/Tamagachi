@@ -1,6 +1,7 @@
 import inspect
+import json
 from pathlib import Path
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 
 
 def get_frame_classes(file_path):
@@ -64,4 +65,31 @@ def show_popup(title: str, message: str):
         message[str]: shows the message of the window
     """
 
-    messagebox.showinfo(title, message)
+    messagebox.showinfo(title, message)\
+    
+
+def save_game(tamagachi_info):
+    """
+    Function saves the game
+    """
+
+    filepath = filedialog.asksaveasfilename(
+        title="Save game as...",
+        initialdir= str(Path.cwd()) + r"\saved_games",
+        filetypes = (
+        ("JSON Files","*.json"),
+        ),
+        defaultextension="json"
+    )
+
+    if filepath:
+        with open(filepath, 'w') as f:
+            json.dump(
+                tamagachi_info,
+                f
+                )
+            show_popup("Game Message", "Game saved!")
+
+
+def quit_game(self):
+    self.destroy()
