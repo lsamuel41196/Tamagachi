@@ -4,8 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from pathlib import Path
 
-from utils.general_functions import getImagePath, save_game
-from utils.button_functions import *
+from utils.general_functions import getImagePath, save_game, load_pet_info
 from game_dictionaries import tamagachi_avatars, background_images
 
 
@@ -83,7 +82,6 @@ class CanvasWidget(ttk.Frame):
             self.canvas.itemconfig(self.bg, image=self.bg_photo)
             self.canvas.bg_image = self.bg_photo  
 
-
 class PetEntryWidget(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -143,9 +141,6 @@ class PetEntryWidget(ttk.Frame):
         game_frame = self.parent.controller.frames["NewGameSetupFrame"]
         game_frame.game_world_widget.update_canvas(new_pet_image = pet_image, new_bg_image = bg_image)
         
-        
-
-
 class TamagachiInfoWidget(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -187,9 +182,8 @@ class StartButtonWidget(ttk.Frame):
         pet_image = tamagachi_avatars[self.PetInfo.avatar_choice.get()]["default"]
         bg_image = background_images[self.PetInfo.background_choice.get()]
 
-        game_frame = self.parent.controller.frames["GameWorldFrame"]
-
         # Update the GameWorldFrame to reflect changes
+        game_frame = self.parent.controller.frames["GameWorldFrame"]
         game_frame.game_world_widget.update_canvas(new_pet_image = pet_image,new_bg_image = bg_image)
         game_frame.tamagachi_info_widget.update_info()
 
@@ -232,10 +226,7 @@ class BackButtonWidget(ttk.Frame):
         super().__init__(parent)
         self.parent = parent
 
-        self.Back_button = ttk.Button(
-            self, 
-            text="Back", 
-            command=lambda: parent.controller.show_frame(prev_frame)
+        self.Back_button = ttk.Button(self, text="Back", command=lambda: parent.controller.show_frame(prev_frame)
             )
         
 class SaveGameButtonWidget(ttk.Frame):
@@ -243,10 +234,30 @@ class SaveGameButtonWidget(ttk.Frame):
         super().__init__(parent)
         self.parent = parent
 
-        self.Save_button = ttk.Button(
-            self,
-            text="Save Game",
-            command=lambda: save_game(tamagachi_info))
+        self.Save_button = ttk.Button(self, text="Save Game", command=lambda: save_game(tamagachi_info))
+        
+class LoadGameButtonWidget(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
+
+        self.Load_button = ttk.Button(self, text="Load Game", command=lambda: self.load_game())
+
+    def load_game(self):
+
+        pet_info = load_pet_info()
+
+        # Update the Tamagachi object with the loaded pet info
+        for key,value in pet_info.items():
+            setattr(self.parent.controller.Tamagachi, key, value)
+
+        # Update the GameWorldFrame to reflect loaded pet info
+        game_frame = self.parent.controller.frames["GameWorldFrame"]
+        game_frame.game_world_widget.update_canvas()
+        game_frame.tamagachi_info_widget.update_info()
+
+        # Switch to the game world frame
+        self.parent.controller.show_frame("GameWorldFrame")
         
 class QuitGameButtonWidget(ttk.Frame):
     def __init__(self, parent):

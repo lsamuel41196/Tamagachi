@@ -55,7 +55,6 @@ def clamp(value, min_value, max_value) -> int:
     """
     return(max(min_value, min(value, max_value)))
 
-
 def show_popup(title: str, message: str):
     """
     This method shows a pop up message in the game
@@ -67,7 +66,6 @@ def show_popup(title: str, message: str):
 
     messagebox.showinfo(title, message)\
     
-
 def save_game(tamagachi_info):
     """
     Function saves the game
@@ -77,7 +75,7 @@ def save_game(tamagachi_info):
         title="Save game as...",
         initialdir= str(Path.cwd()) + r"\saved_games",
         filetypes = (
-        ("JSON Files","*.json"),
+            ("JSON Files","*.json"),
         ),
         defaultextension="json"
     )
@@ -90,6 +88,49 @@ def save_game(tamagachi_info):
                 )
             show_popup("Game Message", "Game saved!")
 
+def load_pet_info() -> dict:
+    """Loads the pet info from a json file
+
+    Args:
+        None
+
+    Returns:
+        dictionary of pet info
+    
+    """
+
+    #retrieve load file
+    file_path = filedialog.askopenfilename(
+        title="Select a File",
+        initialdir="./",
+        filetypes=(
+            ("JSON Files", "*.json"),
+        ),
+        defaultextension="json"
+    )
+
+    if file_path:
+        try:
+            with open(file_path, 'r') as file:
+                file_info = file.read()
+                pet_info = json.loads(file_info)
+                show_popup("Game Message", "Game loaded!")
+
+        except Exception as e:
+            show_popup("Error", f"Error loading file: {e}")
+    else:
+        show_popup("Error", "No file selected")
+
+    return pet_info
 
 def quit_game(self):
+    """Function to quit the game
+
+    Args:
+        None
+
+    Returns:
+        None
+
+    """
     self.destroy()

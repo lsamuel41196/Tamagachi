@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
 from utils.general_functions import getImagePath, clamp
-from utils.button_functions import load_game
 from game_dictionaries import tamagachi_avatars, background_images
 from utils.widgets import *
 
@@ -24,16 +23,6 @@ class StartFrame(tk.Frame):
         self.logo_image_widget.image_label.grid(row=0, column=0)
         self.logo_image_widget.grid()
 
-
-        # self.game_world_widget = CanvasWidget(self, 
-        #                                       pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
-        #                                       pet_image_size=controller.Tamagachi.image_size,
-        #                                       bg_image_name=background_images["Front Lawn"],
-        #                                       bg_image_size=(300,300)
-        #                                       )
-        # self.game_world_widget.canvas.grid(row=0, column=0)
-        # self.game_world_widget.grid()
-
         NewGameButton = ttk.Button(
             self, 
             text="New Game", 
@@ -41,13 +30,9 @@ class StartFrame(tk.Frame):
             )
         NewGameButton.grid(row=1, column=0)
 
-        
-        LoadGameButton = ttk.Button(
-            self, 
-            text="Load Game", 
-            command=lambda:[controller.show_frame("LoadGameSetupFrame"), load_game()]
-            )
-        LoadGameButton.grid(row=2, column=0)
+        self.loadbuttonwidget = LoadGameButtonWidget(self)
+        self.loadbuttonwidget.Load_button.grid(row=2, column=0)
+        self.loadbuttonwidget.grid()
 
         
         self.quitbuttonwidget = QuitGameButtonWidget(self)
