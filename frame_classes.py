@@ -7,13 +7,6 @@ from game_dictionaries import tamagachi_avatars, background_images
 from utils.widgets import *
 
 
-
-#TODO figure out why canvas widget is not working right
-#TODO figure out why the game time and play time attributes aren't working right
-#TODO Add logo to startframe
-
-
-
 class StartFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)

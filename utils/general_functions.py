@@ -25,8 +25,6 @@ def get_frame_classes(file_path):
     classes = [member[1] for member in inspect.getmembers(module, inspect.isclass)]
     return classes
 
-def determineNextFrame():
-     pass
 
 def getImagePath(image_name) -> str:
      
