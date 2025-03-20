@@ -78,21 +78,6 @@ class NewGameSetupFrame(tk.Frame):
         self.backbuttonwidget.Back_button.grid(row=6, column=0)
         self.backbuttonwidget.grid()
 
-class LoadGameSetupFrame(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-
-        #TODO: Complete this frame
-
-        #back button
-        self.backbuttonwidget = BackButtonWidget(self, prev_frame="StartFrame")
-
-        self.backbuttonwidget.Back_button.grid(row=3, column=0)
-        self.backbuttonwidget.grid()
-
-        pass
-
 class GameWorldFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -136,11 +121,6 @@ class GameWorldFrame(tk.Frame):
         self.quitbuttonwidget = QuitGameButtonWidget(self)
         self.quitbuttonwidget.Quit_button.grid(row=8, column=0)
         self.quitbuttonwidget.grid()
-
-        # #back buttons
-        # self.backbuttonwidget = BackButtonWidget(self, prev_frame="NewGameSetupFrame")
-        # self.backbuttonwidget.Back_button.grid(row=7, column=0)
-        # self.backbuttonwidget.grid()
 
         self.update_game()
 

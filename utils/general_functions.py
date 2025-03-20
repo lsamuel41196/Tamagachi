@@ -102,7 +102,7 @@ def load_pet_info() -> dict:
     #retrieve load file
     file_path = filedialog.askopenfilename(
         title="Select a File",
-        initialdir="./",
+        initialdir="./saved_games/",
         filetypes=(
             ("JSON Files", "*.json"),
         ),

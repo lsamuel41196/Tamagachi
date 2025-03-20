@@ -1,0 +1,1 @@
+{"name": "asdf", "gender": "Male", "happiness": 7, "energy": 10, "hunger": 10, "avatar": "Orange Cat 1", "image_size": [150, 150], "birth_time": 1742441328.4895496, "alive_time": {"Hours": 0, "Minutes": 0, "Seconds": 10}, "interactions": ["Feed", "Hug", "Scold", "Check Status"], "current_action": "Idle"}
