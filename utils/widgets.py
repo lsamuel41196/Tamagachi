@@ -12,8 +12,6 @@ class PhotoObject():
     def __init__(self, image_name, image_size):
         self.image_name = image_name
         self.image_size = image_size
-        # for key, value in kwargs.items():
-        #     setattr(self, key, value)
 
         self.image_path = getImagePath(self.image_name)
         self.image_object = Image.open(self.image_path)
@@ -62,7 +60,8 @@ class CanvasWidget(ttk.Frame):
 
         self.bg = self.canvas.create_image(150, 150, image=self.canvas.bg_image)
         self.pet = self.canvas.create_image(150, 200, image=self.canvas.pet_image)     #create pet image on canvas
-
+    
+    
     def update_canvas(self, **kwargs):
         """
         update pet and background images dynamically
@@ -70,6 +69,8 @@ class CanvasWidget(ttk.Frame):
         **kwargs
         new_pet_image = pet_image
         new_bg_image = bg_image
+
+        image_object = ImageTk.PhotoImage object
         """
 
         if kwargs.get("new_pet_image"):
@@ -81,6 +82,10 @@ class CanvasWidget(ttk.Frame):
             self.bg_photo = PhotoObject(kwargs["new_bg_image"], self.bg_image_size).photo_object
             self.canvas.itemconfig(self.bg, image=self.bg_photo)
             self.canvas.bg_image = self.bg_photo  
+
+        if kwargs.get("image_object"):
+            self.canvas.itemconfig(self.pet, image=kwargs["image_object"])
+            self.canvas.pet_image = kwargs["image_object"]
 
 class PetEntryWidget(ttk.Frame):
     def __init__(self, parent):
@@ -216,10 +221,16 @@ class InteractionWidget(ttk.Frame):
         else:
             interaction_msg = "invalid command"
 
+        if interaction in tamagachi_avatars[self.parent.controller.Tamagachi.avatar].keys():
+            self.parent.controller.show_frame("GameAnimationFrame")
+            self.parent.controller.frames["GameAnimationFrame"].animate(interaction)
+
+
         self.parent.controller.frames["GameWorldFrame"].tamagachi_info_widget.update_info()
 
+
         self.game_message.config(text=interaction_msg)
-        self.after(10000, lambda: self.game_message.config(text="")) #clear message after 3 seconds
+        self.after(10000, lambda: self.game_message.config(text="")) #clear message after 10 seconds
 
 class BackButtonWidget(ttk.Frame):
     def __init__(self, parent, prev_frame):

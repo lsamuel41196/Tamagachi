@@ -9,7 +9,9 @@ tamagachi_avatars = {
     "Orange Cat 1": {
         "default": "orange_cat1_default.png",
         "happy": "orange_cat1_happy.png",
-        "sad": "orange_cat1_sad.png"
+        "sad": "orange_cat1_sad.png",
+        "Feed": "orange_cat1_eating.png",
+        "Hug": "orange_cat1_hugging.png",
     },
 
     "Orange Cat 2": {

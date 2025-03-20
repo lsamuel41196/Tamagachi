@@ -10,6 +10,7 @@ class Tamagachi:
         self.energy = 10        #start with high energy
         self.hunger = 10        #hunger for food
 
+
         self.avatar = "Orange Cat 1"
         self.image_size = (150, 150)
 
@@ -21,6 +22,8 @@ class Tamagachi:
         }
 
         self.interactions = ["Feed", "Hug", "Scold", "Check Status"]
+        self.current_action = "Idle"
+
 
     def set_name(self, name):
         """
@@ -53,6 +56,7 @@ class Tamagachi:
         return self.happiness
 
     def feed(self) -> str:
+
         self.happiness += 2
 
         message = f"{self.name} enjoys the food! 😋"
@@ -106,3 +110,6 @@ class Tamagachi:
         alive_time_string = f"{hours:02}:{minutes:02}:{seconds:02}"
 
         return alive_time_string
+    
+    def animate(self):
+        pass

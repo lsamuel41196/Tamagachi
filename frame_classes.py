@@ -1,4 +1,5 @@
 import tkinter as tk
+import math
 from tkinter import ttk
 from pathlib import Path
 from utils.general_functions import getImagePath, clamp
@@ -97,8 +98,6 @@ class GameWorldFrame(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        #TODO: Figure out why attributes are not updating
-
         #game world widget
         self.game_world_widget = CanvasWidget(self, 
                                               pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
@@ -149,7 +148,7 @@ class GameWorldFrame(tk.Frame):
 
         self.update_pet()
         self.tamagachi_info_widget.update_info()                #update the tamagachi info widget
-        self.after(100, self.update_game)                      #call the update_tamagachi_info_widget again after 1 second. Recursion?
+        self.after(100, self.update_game)                      #call the update_tamagachi_info_widget again after 100 ms
 
     def update_pet(self):
 
@@ -164,4 +163,52 @@ class GameWorldFrame(tk.Frame):
             self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["default"])
         
         self.controller.Tamagachi.happiness = clamp(self.controller.Tamagachi.get_happiness(), 0, 10)
-            
+    
+
+class GameAnimationFrame(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        #game world widget
+        self.game_world_widget = CanvasWidget(self, 
+                                              pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
+                                              pet_image_size=controller.Tamagachi.image_size,
+                                              bg_image_name=background_images["Front Lawn"],
+                                              bg_image_size=(300,300)
+                                              )
+        self.game_world_widget.canvas.grid(row=0, column=0)
+        self.game_world_widget.grid()
+
+
+        #back button
+        self.backbuttonwidget = BackButtonWidget(self, prev_frame="GameWorldFrame")
+        self.backbuttonwidget.Back_button.grid(row=3, column=0)
+        self.backbuttonwidget.grid()
+
+    def animate(self, interaction):
+
+
+        frames = self.get_frames(interaction)
+        animation = self.animate_frames(frames, index=0)
+
+    def get_frames(self,interaction):
+        FRAME_WIDTH = 150
+        FRAME_HEIGHT = 150
+        NUM_FRAMES = 4
+
+        sprite_sheet = Image.open(getImagePath(tamagachi_avatars[self.controller.Tamagachi.avatar][interaction]))
+        frames = [
+            ImageTk.PhotoImage(sprite_sheet.crop((0,0,FRAME_WIDTH,FRAME_HEIGHT))),
+            ImageTk.PhotoImage(sprite_sheet.crop((FRAME_WIDTH,0,FRAME_WIDTH*2,FRAME_HEIGHT))),
+            ImageTk.PhotoImage(sprite_sheet.crop((0,FRAME_HEIGHT,FRAME_WIDTH,FRAME_HEIGHT*2))),
+            ImageTk.PhotoImage(sprite_sheet.crop((FRAME_WIDTH,FRAME_HEIGHT,FRAME_WIDTH*2,FRAME_HEIGHT*2))),
+        ]
+
+        return frames
+    
+    def animate_frames(self,frames,index=0):
+
+        if index < len(frames):
+            self.game_world_widget.update_canvas(image_object=frames[index])
+            self.after(1000, self.animate_frames, frames, index+1)

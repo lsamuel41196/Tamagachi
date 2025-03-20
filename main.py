@@ -25,7 +25,7 @@ class App(tk.Tk):
 
         self.frames = {}
 
-        for F in (StartFrame, NewGameSetupFrame, LoadGameSetupFrame, GameWorldFrame):
+        for F in (StartFrame, NewGameSetupFrame, LoadGameSetupFrame, GameWorldFrame, GameAnimationFrame):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
