@@ -2,7 +2,7 @@ import tkinter as tk
 import math
 from tkinter import ttk
 from pathlib import Path
-from utils.general_functions import getImagePath, clamp
+from utils.general_functions import getImagePath
 from game_dictionaries import tamagachi_avatars, background_images
 from utils.widgets import *
 
@@ -91,28 +91,32 @@ class GameWorldFrame(tk.Frame):
         self.tamagachi_info_widget.Tamagachi_name_label.grid(row=1, column=0)
         self.tamagachi_info_widget.Tamagachi_gender_label.grid(row=2, column=0)
         self.tamagachi_info_widget.Tamagachi_happiness_label.grid(row=3, column=0)
-        self.tamagachi_info_widget.Tamagachi_time_label.grid(row=4, column=0)
+        self.tamagachi_info_widget.Tamagachi_energy_label.grid(row=3, column=1)
+        self.tamagachi_info_widget.Tamagachi_hunger_label.grid(row=3, column=2)
+        self.tamagachi_info_widget.Tamagachi_level_label.grid(row=4, column=0)
+        self.tamagachi_info_widget.Tamagachi_experience_label.grid(row=4, column=1)
+        self.tamagachi_info_widget.Tamagachi_time_label.grid(row=5, column=0)
         self.tamagachi_info_widget.grid()
 
         #interact buttons
         self.interaction_widget = InteractionWidget(self)
-        self.interaction_widget.interaction_choice.grid(row=5, column=0)
-        self.interaction_widget.interaction_button.grid(row=5, column=1)
+        self.interaction_widget.interaction_choice.grid(row=6, column=0)
+        self.interaction_widget.interaction_button.grid(row=6, column=1)
         self.interaction_widget.grid()
 
         #message widget
-        self.interaction_widget.game_message.grid(row=6, column=0)
+        self.interaction_widget.game_message.grid(row=7, column=0)
         self.interaction_widget.grid()
 
 
         #save game widget
-        self.savebuttonwidget = SaveGameButtonWidget(self, controller.Tamagachi.__dict__)
-        self.savebuttonwidget.Save_button.grid(row=7, column=0)
+        self.savebuttonwidget = SaveGameButtonWidget(self, controller.Tamagachi)
+        self.savebuttonwidget.Save_button.grid(row=8, column=0)
         self.savebuttonwidget.grid()
 
         #quit game widget
         self.quitbuttonwidget = QuitGameButtonWidget(self)
-        self.quitbuttonwidget.Quit_button.grid(row=8, column=0)
+        self.quitbuttonwidget.Quit_button.grid(row=9, column=0)
         self.quitbuttonwidget.grid()
 
         self.update_game()
@@ -121,22 +125,23 @@ class GameWorldFrame(tk.Frame):
 
         self.update_pet()
         self.tamagachi_info_widget.update_info()                #update the tamagachi info widget
-        self.after(100, self.update_game)                      #call the update_tamagachi_info_widget again after 100 ms
+        self.after(100, self.update_game)                       #call the update_tamagachi_info_widget again after 100 ms
+
+
+
 
     def update_pet(self):
 
         #check pet happiness and update pet image accordingly
-        if (self.controller.Tamagachi.get_happiness() >= 7):
+        if (self.controller.Tamagachi.happiness >= 7):
             self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["happy"]) 
 
-        elif (self.controller.Tamagachi.get_happiness() <= 3):
+        elif (self.controller.Tamagachi.happiness <= 3):
             self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["sad"])
 
         else:
             self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["default"])
         
-        self.controller.Tamagachi.happiness = clamp(self.controller.Tamagachi.get_happiness(), 0, 10)
-    
 
 class GameAnimationFrame(tk.Frame):
     def __init__(self, parent, controller):
@@ -168,9 +173,8 @@ class GameAnimationFrame(tk.Frame):
     def get_frames(self,interaction):
         FRAME_WIDTH = 150
         FRAME_HEIGHT = 150
-        NUM_FRAMES = 4
 
-        sprite_sheet = Image.open(getImagePath(tamagachi_avatars[self.controller.Tamagachi.avatar][interaction]))
+        sprite_sheet = Image.open(getImagePath(tamagachi_avatars[self.controller.Tamagachi.avatar][interaction]["animation"]))
         frames = [
             ImageTk.PhotoImage(sprite_sheet.crop((0,0,FRAME_WIDTH,FRAME_HEIGHT))),
             ImageTk.PhotoImage(sprite_sheet.crop((FRAME_WIDTH,0,FRAME_WIDTH*2,FRAME_HEIGHT))),

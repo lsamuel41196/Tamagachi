@@ -155,6 +155,10 @@ class TamagachiInfoWidget(ttk.Frame):
         self.Tamagachi_name_label = ttk.Label(self)
         self.Tamagachi_gender_label = ttk.Label(self)
         self.Tamagachi_happiness_label = ttk.Label(self)
+        self.Tamagachi_energy_label = ttk.Label(self)
+        self.Tamagachi_hunger_label = ttk.Label(self)
+        self.Tamagachi_level_label = ttk.Label(self)
+        self.Tamagachi_experience_label = ttk.Label(self)
         self.Tamagachi_time_label = ttk.Label(self)
 
         self.update_info()
@@ -165,6 +169,10 @@ class TamagachiInfoWidget(ttk.Frame):
         self.Tamagachi_name_label.config(text=f"Name: {self.parent.controller.Tamagachi.name}")
         self.Tamagachi_gender_label.config(text=f"Gender: {self.parent.controller.Tamagachi.gender}")
         self.Tamagachi_happiness_label.config(text=f"Happiness: {self.parent.controller.Tamagachi.happiness}")
+        self.Tamagachi_energy_label.config(text=f"Energy: {self.parent.controller.Tamagachi.energy}")
+        self.Tamagachi_hunger_label.config(text=f"Hunger: {self.parent.controller.Tamagachi.hunger}")
+        self.Tamagachi_level_label.config(text=f"Level: {self.parent.controller.Tamagachi.level}")
+        self.Tamagachi_experience_label.config(text=f"Experience: {self.parent.controller.Tamagachi.experience}")
         self.Tamagachi_time_label.config(text=f"Time Alive: {self.parent.controller.Tamagachi.print_alive_time()}")
 
 class StartButtonWidget(ttk.Frame):
@@ -192,6 +200,8 @@ class StartButtonWidget(ttk.Frame):
         game_frame.game_world_widget.update_canvas(new_pet_image = pet_image,new_bg_image = bg_image)
         game_frame.tamagachi_info_widget.update_info()
 
+        self.parent.controller.Tamagachi.start_decay_threads()
+
         # Switch to the game world frame
         self.parent.controller.show_frame("GameWorldFrame")
 
@@ -210,24 +220,25 @@ class InteractionWidget(ttk.Frame):
 
     def execute_interaction(self):
         interaction = self.interaction_choice.get()
+        
         if interaction == "Feed":
-            interaction_msg = self.parent.controller.Tamagachi.feed()
+            can_perform, interaction_msg = self.parent.controller.Tamagachi.feed()
         elif interaction == "Hug":
-            interaction_msg = self.parent.controller.Tamagachi.hug()
+            can_perform, interaction_msg = self.parent.controller.Tamagachi.hug()
         elif interaction == "Scold":
-            interaction_msg = self.parent.controller.Tamagachi.scold()
+            can_perform, interaction_msg = self.parent.controller.Tamagachi.scold()
         elif interaction == "Check Status":
-            interaction_msg = self.parent.controller.Tamagachi.check_status()
+            can_perform, interaction_msg = self.parent.controller.Tamagachi.check_status()
         else:
-            interaction_msg = "invalid command"
+            can_perform, interaction_msg = False, "invalid command"
 
-        if interaction in tamagachi_avatars[self.parent.controller.Tamagachi.avatar].keys():
-            self.parent.controller.show_frame("GameAnimationFrame")
-            self.parent.controller.frames["GameAnimationFrame"].animate(interaction)
+        if can_perform:
+            if interaction in tamagachi_avatars[self.parent.controller.Tamagachi.avatar].keys():
+                self.parent.controller.show_frame("GameAnimationFrame")
+                self.parent.controller.frames["GameAnimationFrame"].animate(interaction)
 
 
         self.parent.controller.frames["GameWorldFrame"].tamagachi_info_widget.update_info()
-
 
         self.game_message.config(text=interaction_msg)
         self.after(10000, lambda: self.game_message.config(text="")) #clear message after 10 seconds
@@ -266,6 +277,8 @@ class LoadGameButtonWidget(ttk.Frame):
         game_frame = self.parent.controller.frames["GameWorldFrame"]
         game_frame.game_world_widget.update_canvas()
         game_frame.tamagachi_info_widget.update_info()
+
+        self.parent.controller.Tamagachi.start_decay_threads()
 
         # Switch to the game world frame
         self.parent.controller.show_frame("GameWorldFrame")

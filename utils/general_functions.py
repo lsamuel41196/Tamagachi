@@ -2,6 +2,7 @@ import inspect
 import json
 from pathlib import Path
 from tkinter import messagebox, filedialog
+from utils.MyClassEncoder import MyClassEncoder
 
 
 def get_frame_classes(file_path):
@@ -42,17 +43,6 @@ def getImagePath(image_name) -> str:
 
      return imagePath
 
-def clamp(value, min_value, max_value) -> int:
-    """
-    This method clamps the value in a certain range
-    
-    params:
-        value - value to be clamped
-        min_value - minimum bound
-        max_value - maximum bound
-    """
-    return(max(min_value, min(value, max_value)))
-
 def show_popup(title: str, message: str):
     """
     This method shows a pop up message in the game
@@ -81,8 +71,9 @@ def save_game(tamagachi_info):
     if filepath:
         with open(filepath, 'w') as f:
             json.dump(
-                tamagachi_info,
-                f
+                tamagachi_info.__dict__,
+                f,
+                cls=MyClassEncoder
                 )
             show_popup("Game Message", "Game saved!")
 

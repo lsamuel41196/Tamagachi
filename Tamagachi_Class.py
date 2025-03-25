@@ -1,15 +1,27 @@
 import time
 from game_dictionaries import tamagachi_avatars
+import threading
 
 class Tamagachi:
     def __init__(self):
 
         self.name = "Temp"
         self.gender = ""
-        self.happiness = 5      #starts with moderate happiness 
-        self.energy = 10        #start with high energy
-        self.hunger = 10        #hunger for food
+        self._happiness = 5      #starts with moderate happiness 
+        self._energy = 4        #start with high energy
+        self._hunger = 4        #hunger for food
+        self._level = 1          #level of pet
+        self._experience = 0     #experience of pet
 
+        # self.happiness_decay_thread = threading.Thread(target=self.happiness_decay, daemon=True)
+        # self.energy_decay_thread = threading.Thread(target=self.energy_decay, daemon=True)
+        # self.hunger_decay_thread = threading.Thread(target=self.hunger_decay, daemon=True)
+
+        self.happiness_decay_thread = None
+        self.energy_decay_thread = None
+        self.hunger_decay_thread = None
+
+        self.decay_threads = [self.happiness_decay_thread, self.energy_decay_thread, self.hunger_decay_thread]
 
         self.avatar = "Orange Cat 1"
         self.image_size = (150, 150)
@@ -21,8 +33,14 @@ class Tamagachi:
             "Seconds": None
         }
 
+        self.last_interaction_time = {
+            "Feed": 0,
+            "Hug": 0,
+            "Scold": 0,
+        }
+
         self.interactions = ["Feed", "Hug", "Scold", "Check Status"]
-        self.current_action = "Idle"
+        self.current_status = "Idle"
 
 
     def set_name(self, name):
@@ -43,47 +61,150 @@ class Tamagachi:
         else:
             self.gender = gender
 
-    def get_gender(self) -> str:
-        return self.gender
+    @property
+    def happiness(self):
+        return self._happiness
     
-    def get_happiness(self) -> int:
-        """
-        get happiness of pet
+    @happiness.setter
+    def happiness(self, value):
+        self._happiness = max(0, min(value, 10))
 
-        Return: hapiness integer
-        """
+    @property
+    def energy(self):
+        return self._energy
+    
+    @energy.setter
+    def energy(self, value):
+        self._energy = max(0, min(value, 10))
 
-        return self.happiness
+    @property
+    def hunger(self):
+        return self._hunger
+    
+    @hunger.setter
+    def hunger(self, value):
+        self._hunger = max(0, min(value, 10))
 
-    def feed(self) -> str:
+    @property
+    def level(self):
+        return self._level
+    
+    @level.setter
+    def level(self, value):
+        self._level = max(1, min(value, 10))
 
-        self.happiness += 2
+    @property
+    def experience(self):
+        return self._experience
+    
+    @experience.setter
+    def experience(self, value):
 
-        message = f"{self.name} enjoys the food! 😋"
+        while value >= 10:  #level up when experience reaches 10
+            value -= 10
+            self.level += 1
 
-        return (message)
+        self._experience = max(1, min(value, 10))
 
-    def hug(self) -> str:
-        self.happiness += 3
+    def happiness_decay(self):
+        while True:
+            time.sleep(10)
+            if self.energy < 3 or self.hunger < 3:
+                self.happiness -= 1
+    
+    def energy_decay(self):
+        while True:
+            time.sleep(15)
+            self.energy -= 1
 
-        message = f"{self.name} feels loved! 🤗"
+    def hunger_decay(self):
+        while True:
+            time.sleep(20)
+            self.hunger -= 1
 
-        return (message)
+    def start_decay_threads(self):
 
-    def scold(self) -> str:
-        self.happiness -= 1
+        self.init_decay_threads()
 
-        message = f"{self.name} is flustered 😢"
+        for thread in self.decay_threads:
+            thread.start()
 
-        return (message)
+    def init_decay_threads(self):
+        self.happiness_decay_thread = threading.Thread(target=self.happiness_decay, daemon=True)
+        self.energy_decay_thread = threading.Thread(target=self.energy_decay, daemon=True)
+        self.hunger_decay_thread = threading.Thread(target=self.hunger_decay, daemon=True)
 
-    def check_status(self) -> str:
+        self.decay_threads = [self.happiness_decay_thread, self.energy_decay_thread, self.hunger_decay_thread]
+
+    def feed(self):
+
+        can_perform, remaining_time = self.can_perform_action("Feed")
+
+        if can_perform == True:
+
+            self.happiness += 2
+            self.experience += 1
+            self.hunger += 5
+
+            message = f"{self.name} enjoys the food! 😋"
+
+        else:
+            message = f"Feed Cooldown: {remaining_time}"
+
+        return [can_perform, message]
+
+    def hug(self):
+
+        can_perform, remaining_time = self.can_perform_action("Hug")
+
+        if can_perform == True:
+            self.happiness += 3
+            self.experience += 1
+
+            message = f"{self.name} feels loved! 🤗"
+
+        else:
+            message = f"Hug Cooldown: {remaining_time}"
+
+        return [can_perform, message]
+
+    def scold(self):
+
+        can_perform, remaining_time = self.can_perform_action("Scold")
+
+        if can_perform == True:
+            self.happiness -= 1
+            self.experience += 1
+
+            message = f"{self.name} is flustered 😢"
+
+        else:
+            message = f"Scold Cooldown: {remaining_time}"
+
+        return [can_perform, message]
+
+    def can_perform_action(self, interaction: str):
+        
+        current_time = time.time()
+        last_interaction_time = self.last_interaction_time[interaction]
+        remaining_time = round(tamagachi_avatars[self.avatar][interaction]["cooldown"] - (current_time - last_interaction_time))
+
+        if remaining_time <= 0:
+            self.last_interaction_time[interaction] = current_time
+            return [True, remaining_time]
+        else:
+            return [False, remaining_time]
+
+    def check_status(self):
+
         if self.happiness >= 10:
             message = f"{self.name} is super happy! 😍"
         elif self.happiness >= 5:
             message = f"{self.name} is doing well! 😊"
         else:
             message = "{self.name} is feeling lonely... 😢 Give it some love!"
+
+        
         
         return (message)
 
