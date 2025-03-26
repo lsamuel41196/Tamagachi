@@ -39,7 +39,7 @@ class NewGameSetupFrame(tk.Frame):
         self.controller = controller
 
         self.game_world_widget = CanvasWidget(self, 
-                                              pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
+                                              pet_image_name=controller.Tamagachi.determine_avatar(), 
                                               pet_image_size=controller.Tamagachi.image_size,
                                               bg_image_name=background_images["Front Lawn"],
                                               bg_image_size=(300,300)
@@ -78,7 +78,7 @@ class GameWorldFrame(tk.Frame):
 
         #game world widget
         self.game_world_widget = CanvasWidget(self, 
-                                              pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
+                                              pet_image_name=controller.Tamagachi.determine_avatar(), 
                                               pet_image_size=controller.Tamagachi.image_size,
                                               bg_image_name=background_images["Front Lawn"],
                                               bg_image_size=(300,300)
@@ -127,20 +127,10 @@ class GameWorldFrame(tk.Frame):
         self.tamagachi_info_widget.update_info()                #update the tamagachi info widget
         self.after(100, self.update_game)                       #call the update_tamagachi_info_widget again after 100 ms
 
-
-
-
     def update_pet(self):
 
-        #check pet happiness and update pet image accordingly
-        if (self.controller.Tamagachi.happiness >= 7):
-            self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["happy"]) 
-
-        elif (self.controller.Tamagachi.happiness <= 3):
-            self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["sad"])
-
-        else:
-            self.game_world_widget.update_canvas(new_pet_image=tamagachi_avatars[self.controller.Tamagachi.avatar]["default"])
+        self.controller.Tamagachi.set_state()
+        self.game_world_widget.update_canvas(new_pet_image=self.controller.Tamagachi.determine_avatar())
         
 
 class GameAnimationFrame(tk.Frame):
@@ -150,7 +140,7 @@ class GameAnimationFrame(tk.Frame):
 
         #game world widget
         self.game_world_widget = CanvasWidget(self, 
-                                              pet_image_name=tamagachi_avatars[controller.Tamagachi.avatar]["default"], 
+                                              pet_image_name=controller.Tamagachi.determine_avatar(), 
                                               pet_image_size=controller.Tamagachi.image_size,
                                               bg_image_name=background_images["Front Lawn"],
                                               bg_image_size=(300,300)
@@ -174,7 +164,7 @@ class GameAnimationFrame(tk.Frame):
         FRAME_WIDTH = 150
         FRAME_HEIGHT = 150
 
-        sprite_sheet = Image.open(getImagePath(tamagachi_avatars[self.controller.Tamagachi.avatar][interaction]["animation"]))
+        sprite_sheet = Image.open(getImagePath(tamagachi_avatars[self.controller.Tamagachi.avatar]["Interactions"][interaction]["animation"]))
         frames = [
             ImageTk.PhotoImage(sprite_sheet.crop((0,0,FRAME_WIDTH,FRAME_HEIGHT))),
             ImageTk.PhotoImage(sprite_sheet.crop((FRAME_WIDTH,0,FRAME_WIDTH*2,FRAME_HEIGHT))),

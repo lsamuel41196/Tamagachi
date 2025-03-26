@@ -5,18 +5,16 @@ import threading
 class Tamagachi:
     def __init__(self):
 
+        #initialize pet attributes
         self.name = "Temp"
-        self.gender = ""
-        self._happiness = 5      #starts with moderate happiness 
-        self._energy = 4        #start with high energy
-        self._hunger = 4        #hunger for food
-        self._level = 1          #level of pet
-        self._experience = 10     #experience of pet
+        self.gender = "Male"       #starts as male
+        self._happiness = 5         #starts with moderate happiness 
+        self._energy = 4            #start with high energy
+        self._hunger = 4            #hunger for food
+        self._level = 1             #level of pet
+        self._experience = 10       #experience of pet
 
-        # self.happiness_decay_thread = threading.Thread(target=self.happiness_decay, daemon=True)
-        # self.energy_decay_thread = threading.Thread(target=self.energy_decay, daemon=True)
-        # self.hunger_decay_thread = threading.Thread(target=self.hunger_decay, daemon=True)
-
+        #initialize decay threads
         self.happiness_decay_thread = None
         self.energy_decay_thread = None
         self.hunger_decay_thread = None
@@ -39,8 +37,7 @@ class Tamagachi:
             "Scold": 0,
         }
 
-        self.interactions = ["Feed", "Hug", "Scold", "Check Status", "Level Up"]
-        self.current_status = "Idle"
+        self.current_status = "Awake"
 
 
     def set_name(self, name):
@@ -59,7 +56,7 @@ class Tamagachi:
         if gender not in allowed_genders:
             raise ValueError(f'Invalid gender: {gender}. Gender must be male or female')
         else:
-            self.gender = gender
+            self.gender = gender          
 
     @property
     def happiness(self):
@@ -200,7 +197,7 @@ class Tamagachi:
         
         current_time = time.time()
         last_interaction_time = self.last_interaction_time[interaction]
-        remaining_time = round(tamagachi_avatars[self.avatar][interaction]["cooldown"] - (current_time - last_interaction_time))
+        remaining_time = round(tamagachi_avatars[self.avatar]["Interactions"][interaction]["cooldown"] - (current_time - last_interaction_time))
 
         if remaining_time <= 0:
             self.last_interaction_time[interaction] = current_time
@@ -208,18 +205,28 @@ class Tamagachi:
         else:
             return [False, remaining_time]
 
-    def check_status(self):
-
-        if self.happiness >= 10:
-            message = f"{self.name} is super happy! 😍"
-        elif self.happiness >= 5:
-            message = f"{self.name} is doing well! 😊"
+    def set_state(self):
+        
+        if self.energy <= 2:
+            self.current_status = "Asleep"
+        elif self.energy <=4:
+            self.current_status = "Fatigued"
         else:
-            message = "{self.name} is feeling lonely... 😢 Give it some love!"
+            self.current_status = "Awake"
 
+    def determine_avatar(self):
         
-        
-        return (message)
+        if self.current_status == "Asleep":
+            return tamagachi_avatars[self.avatar]["States"]["Asleep"]["sleepy"]
+        elif self.current_status == "Fatigued":
+            return tamagachi_avatars[self.avatar]["States"]["Fatigued"]["tired"]
+        else:
+            if self.happiness >= 7:
+                return tamagachi_avatars[self.avatar]["States"]["Awake"]["happy"]
+            elif self.happiness <= 3:
+                return tamagachi_avatars[self.avatar]["States"]["Awake"]["sad"]
+            else:
+                return tamagachi_avatars[self.avatar]["States"]["Awake"]["default"]
 
     def update_alive_time(self):
         current_time = time.time()

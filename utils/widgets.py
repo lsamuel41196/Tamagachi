@@ -140,7 +140,7 @@ class PetEntryWidget(ttk.Frame):
         Update the game world canvas when selections change
         """
 
-        pet_image = tamagachi_avatars[self.avatar_choice.get()]["default"]
+        pet_image = tamagachi_avatars[self.avatar_choice.get()]["States"]["Awake"]["default"]
         bg_image = background_images[self.background_choice.get()]
 
         game_frame = self.parent.controller.frames["NewGameSetupFrame"]
@@ -192,12 +192,12 @@ class StartButtonWidget(ttk.Frame):
         self.parent.controller.Tamagachi.update_alive_time()
 
         #Pass selected pet avatar and background to GameWorldFrame
-        pet_image = tamagachi_avatars[self.PetInfo.avatar_choice.get()]["default"]
+        self.parent.controller.Tamagachi.avatar = self.PetInfo.avatar_choice.get()
         bg_image = background_images[self.PetInfo.background_choice.get()]
 
         # Update the GameWorldFrame to reflect changes
         game_frame = self.parent.controller.frames["GameWorldFrame"]
-        game_frame.game_world_widget.update_canvas(new_pet_image = pet_image,new_bg_image = bg_image)
+        game_frame.game_world_widget.update_canvas(new_pet_image = self.parent.controller.Tamagachi.determine_avatar(),new_bg_image = bg_image)
         game_frame.tamagachi_info_widget.update_info()
 
         self.parent.controller.Tamagachi.start_decay_threads()
@@ -212,7 +212,9 @@ class InteractionWidget(ttk.Frame):
 
         choice = tk.StringVar()
         self.interaction_choice = ttk.Combobox(self, textvariable=choice)
-        self.interaction_choice['values'] = parent.controller.Tamagachi.interactions
+        # self.interaction_choice['values'] = parent.controller.Tamagachi.interactions
+        self.interaction_choice['values'] = list(tamagachi_avatars[parent.controller.Tamagachi.avatar]["Interactions"].keys())
+
 
         self.interaction_button = ttk.Button(self, text="Interact", command=self.execute_interaction)
 
@@ -235,7 +237,7 @@ class InteractionWidget(ttk.Frame):
             can_perform, interaction_msg = False, "invalid command"
 
         if can_perform:
-            if interaction in tamagachi_avatars[self.parent.controller.Tamagachi.avatar].keys():
+            if interaction in tamagachi_avatars[self.parent.controller.Tamagachi.avatar]["Interactions"].keys():
                 self.parent.controller.show_frame("GameAnimationFrame")
                 self.parent.controller.frames["GameAnimationFrame"].animate(interaction)
 
