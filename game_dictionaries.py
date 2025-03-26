@@ -30,7 +30,13 @@ tamagachi_avatars = {
             "animation": "orange_cat1_scolding.png",
             "frames": 4,
             "cooldown": 30
-        }
+            },
+
+        "Level Up": {
+            "animation": "orange_cat1_level_up.png",
+            "frames": 4,
+            "cooldown": 30
+            }
 
         
 

@@ -11,7 +11,7 @@ class Tamagachi:
         self._energy = 4        #start with high energy
         self._hunger = 4        #hunger for food
         self._level = 1          #level of pet
-        self._experience = 0     #experience of pet
+        self._experience = 10     #experience of pet
 
         # self.happiness_decay_thread = threading.Thread(target=self.happiness_decay, daemon=True)
         # self.energy_decay_thread = threading.Thread(target=self.energy_decay, daemon=True)
@@ -39,7 +39,7 @@ class Tamagachi:
             "Scold": 0,
         }
 
-        self.interactions = ["Feed", "Hug", "Scold", "Check Status"]
+        self.interactions = ["Feed", "Hug", "Scold", "Check Status", "Level Up"]
         self.current_status = "Idle"
 
 
@@ -91,8 +91,8 @@ class Tamagachi:
     
     @level.setter
     def level(self, value):
-        self._level = max(1, min(value, 10))
-
+        self._level = max(1, value)
+        
     @property
     def experience(self):
         return self._experience
@@ -100,11 +100,7 @@ class Tamagachi:
     @experience.setter
     def experience(self, value):
 
-        while value >= 10:  #level up when experience reaches 10
-            value -= 10
-            self.level += 1
-
-        self._experience = max(1, min(value, 10))
+        self._experience = max(1, value)
 
     def happiness_decay(self):
         while True:
@@ -180,6 +176,23 @@ class Tamagachi:
 
         else:
             message = f"Scold Cooldown: {remaining_time}"
+
+        return [can_perform, message]
+
+    def level_up(self):
+        
+        if self.experience >= 10:
+
+            can_perform = True
+
+            self.experience -= 10
+            self.level += 1
+
+            message = f"Congratulations! {self.name} leveled up! 🎉"
+
+        else:
+            can_perform = False
+            message = f"Not enough experience to level up."
 
         return [can_perform, message]
 

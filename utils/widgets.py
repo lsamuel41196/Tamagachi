@@ -227,6 +227,8 @@ class InteractionWidget(ttk.Frame):
             can_perform, interaction_msg = self.parent.controller.Tamagachi.hug()
         elif interaction == "Scold":
             can_perform, interaction_msg = self.parent.controller.Tamagachi.scold()
+        elif interaction == "Level Up":
+            can_perform, interaction_msg = self.parent.controller.Tamagachi.level_up()
         elif interaction == "Check Status":
             can_perform, interaction_msg = self.parent.controller.Tamagachi.check_status()
         else:
