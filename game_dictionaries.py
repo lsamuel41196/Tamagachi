@@ -21,13 +21,13 @@ tamagachi_avatars = {
 
             "Fatigued": {
 
-                "tired": "orange_cat1_sad.png"        #need to add
+                "tired": "orange_cat1_fatigued.png"        #need to add
 
             },
 
             "Asleep": {
                 
-                "sleepy": "orange_cat1_sad.png"    #need to add
+                "sleepy": "orange_cat1_asleep.png"    #need to add
 
             }
         },

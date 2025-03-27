@@ -6,6 +6,8 @@ from pathlib import Path
 from Tamagachi_Class import Tamagachi
 from utils.general_functions import show_popup
 
+#TODO: Implement a feature that will automatically put the pet to sleep after energy is too low then cause the energy to increase
+
 
 class App(tk.Tk):
     def __init__(self, *args, **kwargs): 
