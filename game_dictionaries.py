@@ -1,8 +1,6 @@
 """
 When adding tamagachi avatars or background use the dictionaries here.
 
-Key: should be the name of the object
-Value: should be the file name of the image
 """
 
 tamagachi_avatars = {

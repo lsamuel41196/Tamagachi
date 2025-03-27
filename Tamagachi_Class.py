@@ -8,9 +8,9 @@ class Tamagachi:
         #initialize pet attributes
         self.name = "Temp"
         self.gender = "Male"       #starts as male
-        self._happiness = 5         #starts with moderate happiness 
-        self._energy = 4            #start with high energy
-        self._hunger = 4            #hunger for food
+        self._happiness = 6         #starts with moderate happiness 
+        self._energy = 2            #start with high energy
+        self._hunger = 6            #hunger for food
         self._level = 1             #level of pet
         self._experience = 10       #experience of pet
 
@@ -20,6 +20,8 @@ class Tamagachi:
         self.hunger_decay_thread = None
 
         self.decay_threads = [self.happiness_decay_thread, self.energy_decay_thread, self.hunger_decay_thread]
+
+        self.runner = True
 
         self.avatar = "Orange Cat 1"
         self.image_size = (150, 150)
@@ -100,27 +102,55 @@ class Tamagachi:
         self._experience = max(1, value)
 
     def happiness_decay(self):
-        while True:
-            time.sleep(10)
+        while self.runner:
             if self.energy < 3 or self.hunger < 3:
                 self.happiness -= 1
+
+            time.sleep(10)                          #change this to longer when ready
+
     
     def energy_decay(self):
-        while True:
-            time.sleep(15)
-            self.energy -= 1
+        while self.runner:
+
+            print(f"current status: {self.current_status}")
+
+            if self.current_status in ["Awake", "Fatigued"]:
+                self.energy -= 1
+                print("lost an energy")
+                
+
+            elif self.current_status == "Asleep":
+                print("sleeping")
+                time.sleep(5)                          #change this to longer when ready
+                print("awake")
+                self.energy = 10
+                print("energy set to 10")
+                self.set_state()
+                print(f"state set to {self.current_status}")
+            
+            time.sleep(15)                          #change this to longer when ready
+
+
 
     def hunger_decay(self):
-        while True:
-            time.sleep(20)
+        while self.runner:
             self.hunger -= 1
+            time.sleep(20)                          #change this to longer when ready
+
 
     def start_decay_threads(self):
 
-        self.init_decay_threads()
+        if self.runner == True:
+            self.init_decay_threads()
+            for thread in self.decay_threads:
+                thread.start()
+        elif self.runner == False:
+            raise ValueError(f"Decay thread runner is {self.runner}.")
+
+    def stop_decay_threads(self):
 
         for thread in self.decay_threads:
-            thread.start()
+            thread.join()
 
     def init_decay_threads(self):
         self.happiness_decay_thread = threading.Thread(target=self.happiness_decay, daemon=True)
@@ -207,7 +237,7 @@ class Tamagachi:
 
     def set_state(self):
         
-        if self.energy <= 2:
+        if self.energy == 0:
             self.current_status = "Asleep"
         elif self.energy <=4:
             self.current_status = "Fatigued"
