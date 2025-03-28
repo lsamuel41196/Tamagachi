@@ -159,18 +159,24 @@ class Tamagachi:
 
         self.decay_threads = [self.happiness_decay_thread, self.energy_decay_thread, self.hunger_decay_thread]
 
+
+    #TODO - maybe wrap these interactions in a decorator
+    #TODO - known bug that sometimes cooldown is shown incorrectly
+    #TODO - sometimes cooldown will get triggered when action does not occur. Need to fix this. I think by using Try 
     def feed(self):
 
-        can_perform, remaining_time = self.can_perform_action("Feed")
+        interaction = "Feed"
 
-        if can_perform == True:
+        can_perform, remaining_time = self.can_perform_action(interaction)
 
+        if self.current_status == "Asleep":
+            can_perform = False
+            message = f"Cannot perform {interaction.lower()} while asleep."
+        elif self.current_status == "Awake" and can_perform == True:
             self.happiness += 2
             self.experience += 1
             self.hunger += 5
-
             message = f"{self.name} enjoys the food! 😋"
-
         else:
             message = f"Feed Cooldown: {remaining_time}"
 
@@ -178,14 +184,17 @@ class Tamagachi:
 
     def hug(self):
 
-        can_perform, remaining_time = self.can_perform_action("Hug")
+        interaction = "Hug"
 
-        if can_perform == True:
+        can_perform, remaining_time = self.can_perform_action(interaction)
+
+        if self.current_status == "Asleep":
+            can_perform = False
+            message = f"Cannot perform {interaction.lower()} while asleep."
+        elif can_perform == True:
             self.happiness += 3
             self.experience += 1
-
             message = f"{self.name} feels loved! 🤗"
-
         else:
             message = f"Hug Cooldown: {remaining_time}"
 
@@ -193,14 +202,17 @@ class Tamagachi:
 
     def scold(self):
 
-        can_perform, remaining_time = self.can_perform_action("Scold")
+        interaction = "Scold"
 
-        if can_perform == True:
+        can_perform, remaining_time = self.can_perform_action(interaction)
+
+        if self.current_status == "Asleep":
+            can_perform = False
+            message = f"Cannot perform {interaction.lower()} while asleep."
+        elif can_perform == True:
             self.happiness -= 1
             self.experience += 1
-
             message = f"{self.name} is flustered 😢"
-
         else:
             message = f"Scold Cooldown: {remaining_time}"
 
@@ -224,7 +236,7 @@ class Tamagachi:
         return [can_perform, message]
 
     def can_perform_action(self, interaction: str):
-        
+      
         current_time = time.time()
         last_interaction_time = self.last_interaction_time[interaction]
         remaining_time = round(tamagachi_avatars[self.avatar]["Interactions"][interaction]["cooldown"] - (current_time - last_interaction_time))

@@ -8,6 +8,8 @@ from utils.general_functions import show_popup
 
 #TODO: Implement a feature that prevent the user from interacting with the pet if it's asleep
 
+#TODO: imeplement feature to close the threads properly
+
 
 class App(tk.Tk):
     def __init__(self, *args, **kwargs): 
